@@ -10,8 +10,11 @@ import OperatorDashboard from "./pages/OperatorDashboard";
 import TechnicianDashboard from "./pages/TechnicianDashboard";
 import Start from "./pages/StartPage";
 import Sidebar from "./components/Sidebar";
+<<<<<<< HEAD
 import SubmitForm from "./pages/SubmitForm";
 import Forms from "./pages/Forms";
+=======
+>>>>>>> e8be632a304234eeaacb99a65566cf0d769ef9a1
 
 function Logout() {
   localStorage.clear();
@@ -89,9 +92,13 @@ function App() {
               isLoggedIn ? <TechnicianDashboard /> : <Navigate to={"/login"} />
             }
           />
+<<<<<<< HEAD
           <Route path="/submitform" element={<SubmitForm />} />
           <Route path="/logout" element={<Logout />} />
           <Route path="/forms" element={<Forms />} />
+=======
+          <Route path="/logout" element={<Logout />} />
+>>>>>>> e8be632a304234eeaacb99a65566cf0d769ef9a1
         </Routes>
       </div>
     </div>

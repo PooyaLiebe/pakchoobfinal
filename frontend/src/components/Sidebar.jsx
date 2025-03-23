@@ -75,11 +75,7 @@ const Sidebar = () => {
           name: "Dashboard",
           icon: BarChart2,
           color: "#6366f1",
-<<<<<<< HEAD
           href: "/admindashboard",
-=======
-          href: "/dashboard",
->>>>>>> e8be632a304234eeaacb99a65566cf0d769ef9a1
         },
         {
           name: "Submit Form",

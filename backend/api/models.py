@@ -6,9 +6,11 @@ from django.contrib.auth.models import AbstractUser, User
 
 class LoginUser(AbstractUser):
     USER_TYPE_CHOICE = (
-        ("admin", "Admin"),
-        ("operator", "Operator"),
-        ("technician", "Technician"),
+        ("pm", "Pm"),
+        ("mechanic", "Mechanic"),
+        ("production", "Production"),
+        ("utility", "Utility"),
+        ("metalworking", "Metalworking"),
     )
     user_type = models.CharField(max_length=50, choices=USER_TYPE_CHOICE)
 

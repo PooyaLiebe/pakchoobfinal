@@ -28,7 +28,7 @@ class AdminSubmitForm(admin.ModelAdmin):
 
 class LoginUserAdmin(admin.ModelAdmin):
     list_display = ["id", "username", "password", "user_type"]
-    list_editable = ["user_type"]
+    list_editable = ["user_type", "password"]
 
 
 admin.site.register(LoginUser, LoginUserAdmin)

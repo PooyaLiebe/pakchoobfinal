@@ -1,62 +1,166 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { BarChart2, FormInput, Menu } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { BarChart2, FormInput, Menu, Power } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Tooltip } from "@mui/material";
-const ADMIN_SIDEBAR = [
-  { name: "Dashboard", icon: BarChart2, color: "#6366f1", href: "/dashboard" },
-  {
-    name: "Submit Form",
-    icon: FormInput,
-    color: "#6366f1",
-    href: "/submitform",
-  },
-  { name: "Forms", icon: FormInput, color: "#6366f1", href: "/forms" },
-  { name: "Pm Forms", icon: FormInput, color: "#6366f1", href: "/pmforms" },
-  { name: "Pm Submit", icon: FormInput, color: "#6366f1", href: "/pmsubmit" },
-];
 
-const TECHNICIAN_SIDEBAR = [
-  {
-    name: "Technician Dashboard",
-    icon: BarChart2,
-    color: "#6366f1",
-    href: "/techniciandashboard",
-  },
-  {
-    name: "Technician Submit",
-    icon: FormInput,
-    color: "#6366f1",
-    href: "/techniciansubmit",
-  },
-  { name: "Forms", icon: FormInput, color: "#6366f1", href: "/forms" },
-  { name: "Pm Forms", icon: FormInput, color: "#6366f1", href: "/pmforms" },
-];
+// const ADMIN_SIDEBAR = [
+//   { name: "Dashboard", icon: BarChart2, color: "#6366f1", href: "/dashboard" },
+//   {
+//     name: "Submit Form",
+//     icon: FormInput,
+//     color: "#6366f1",
+//     href: "/submitform",
+//   },
+//   { name: "Forms", icon: FormInput, color: "#6366f1", href: "/forms" },
+//   { name: "Pm Forms", icon: FormInput, color: "#6366f1", href: "/pmforms" },
+//   { name: "Pm Submit", icon: FormInput, color: "#6366f1", href: "/pmsubmit" },
+// ];
 
-const OPERATOR_SIDEBAR = [
-  {
-    name: "Operator Dashboard",
-    icon: BarChart2,
-    color: "#6366f1",
-    href: "/operatordashboard",
-  },
-  {
-    name: "Operator Submit",
-    icon: FormInput,
-    color: "#6366f1",
-    href: "/operatorsubmit",
-  },
-  { name: "Forms", icon: FormInput, color: "#6366f1", href: "/forms" },
-];
+// const TECHNICIAN_SIDEBAR = [
+//   {
+//     name: "Technician Dashboard",
+//     icon: BarChart2,
+//     color: "#6366f1",
+//     href: "/techniciandashboard",
+//   },
+//   {
+//     name: "Technician Submit",
+//     icon: FormInput,
+//     color: "#6366f1",
+//     href: "/techniciansubmit",
+//   },
+//   { name: "Forms", icon: FormInput, color: "#6366f1", href: "/forms" },
+//   { name: "Pm Forms", icon: FormInput, color: "#6366f1", href: "/pmforms" },
+// ];
 
-const Sidebar = ({ role }) => {
+// const OPERATOR_SIDEBAR = [
+//   {
+//     name: "Operator Dashboard",
+//     icon: BarChart2,
+//     color: "#6366f1",
+//     href: "/operatordashboard",
+//   },
+//   {
+//     name: "Operator Submit",
+//     icon: FormInput,
+//     color: "#6366f1",
+//     href: "/operatorsubmit",
+//   },
+//   { name: "Forms", icon: FormInput, color: "#6366f1", href: "/forms" },
+// ];
+
+const Sidebar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [userType, setUserType] = useState(null);
+  const [menuItems, setMenuItems] = useState([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  let sidebarItems = [];
-  if (role === "admin") sidebarItems = ADMIN_SIDEBAR;
-  else if (role === "technician") sidebarItems = TECHNICIAN_SIDEBAR;
-  else if (role === "operator") sidebarItems = OPERATOR_SIDEBAR;
+  useEffect(() => {
+    const storedUserType = localStorage.getItem("user_type");
+    setUserType(storedUserType);
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userType"); // Remove userType on logout
+    setIsLoggedIn(false);
+  };
+
+  useEffect(() => {
+    if (userType === "admin") {
+      setMenuItems([
+        {
+          name: "Dashboard",
+          icon: BarChart2,
+          color: "#6366f1",
+          href: "/admindashboard",
+        },
+        {
+          name: "Submit Form",
+          icon: FormInput,
+          color: "#6366f1",
+          href: "/submitform",
+        },
+        { name: "Forms", icon: FormInput, color: "#6366f1", href: "/forms" },
+        {
+          name: "Pm Forms",
+          icon: FormInput,
+          color: "#6366f1",
+          href: "/pmforms",
+        },
+        {
+          name: "Pm Submit",
+          icon: FormInput,
+          color: "#6366f1",
+          href: "/pmsubmit",
+        },
+        {
+          name: "Logout",
+          icon: Power,
+          color: "#6366f1",
+          href: "/logout",
+        },
+      ]);
+    } else if (userType === "technician") {
+      setMenuItems([
+        {
+          name: "Technician Dashboard",
+          icon: BarChart2,
+          color: "#6366f1",
+          href: "/techniciandashboard",
+        },
+        {
+          name: "Technician Submit",
+          icon: FormInput,
+          color: "#6366f1",
+          href: "/techniciansubmit",
+        },
+        { name: "Forms", icon: FormInput, color: "#6366f1", href: "/forms" },
+        {
+          name: "Pm Forms",
+          icon: FormInput,
+          color: "#6366f1",
+          href: "/pmforms",
+        },
+        {
+          name: "Logout",
+          icon: Power,
+          color: "#6366f1",
+          href: "/logout",
+        },
+      ]);
+    } else if (userType === "operator") {
+      setMenuItems([
+        {
+          name: "Operator Dashboard",
+          icon: BarChart2,
+          color: "#6366f1",
+          href: "/operatordashboard",
+        },
+        {
+          name: "Operator Submit",
+          icon: FormInput,
+          color: "#6366f1",
+          href: "/operatorsubmit",
+        },
+        { name: "Forms", icon: FormInput, color: "#6366f1", href: "/forms" },
+        {
+          name: "Logout",
+          icon: Power,
+          color: "#6366f1",
+          href: "/logout",
+        },
+      ]);
+    } else {
+      setMenuItems([]);
+    }
+  }, [userType]);
+
+  if (!userType) {
+    return null;
+  }
 
   return (
     <motion.div
@@ -75,7 +179,7 @@ const Sidebar = ({ role }) => {
           <Menu size={24} />
         </motion.button>
         <nav className="mt-8 flex-grow">
-          {sidebarItems.map((item) => (
+          {menuItems.map((item) => (
             <Link key={item.href} to={item.href}>
               <Tooltip title={item.name} placement="right">
                 <motion.div className="flex items-center p-4 text-sm font-medium rounded-lg hover:bg-gray-700 transition-colors mb-2">

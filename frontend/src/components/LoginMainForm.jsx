@@ -30,17 +30,27 @@ const LoginMainForm = ({ userType }) => {
         localStorage.setItem("user_type", response.data.user_type);
 
         // Navigate to the corresponding page
-        if (response.data.user_type === "operator") {
-          navigate("/operatordashboard");
-        } else if (response.data.user_type === "technician") {
-          navigate("/techniciandashboard");
-        } else if (response.data.user_type === "admin") {
-          navigate("/admindashboard");
+        switch (response.data.user_type) {
+          case "operator":
+            navigate("/operatordashboard");
+            break;
+          case "technician":
+            navigate("/techniciandashboard");
+            break;
+          case "admin":
+            navigate("/admindashboard");
+            break;
+          default:
+            console.warn("Unknown user type:", response.data.user_type);
+            setError("Unknown user type. Contact support."); // Handle unknown types
+            break;
         }
       } else {
         setError("Invalid Credentials");
       }
     } catch (error) {
+      console.error("Login error:", error);
+
       setError("An error occurred. Please try again.");
     }
   };
@@ -48,7 +58,7 @@ const LoginMainForm = ({ userType }) => {
   return (
     <div className="login-container">
       <div className="wrapper">
-        <h2 className="text-2xl text-center font-mono">Login as {userType}</h2>
+        <h2 className="text-2xl text-center font-mono">Login</h2>
         {error && <p style={{ color: "red" }}>{error}</p>}
         <form onSubmit={handleLogin}>
           <div className="input-box">

@@ -6,7 +6,7 @@ import "../styles/Register.css";
 const Register = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [userType, setUserType] = useState("operator");
+  const [userType, setUserType] = useState("admin");
   const [message, setMessage] = useState("");
 
   const navigate = useNavigate();

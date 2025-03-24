@@ -25,7 +25,7 @@ function Start() {
             <button
               type="button"
               onClick={() => {
-                navigate("/technicianlogin");
+                navigate("/adminlogin");
               }}
               className="w-full h-[50px]
                bg-[#fff] border-[none] outline-[none] 
@@ -37,7 +37,7 @@ function Start() {
             <button
               type="button"
               onClick={() => {
-                navigate("/operatorlogin");
+                navigate("/adminlogin");
               }}
               className="w-full h-[50px] bg-[#fff] border-[none] 
               outline-[none] rounded-[40px] [box-shadow:0_0_10px_rgba(0,_0,_0,_0.1)] 

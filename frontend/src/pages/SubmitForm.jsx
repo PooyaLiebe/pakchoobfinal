@@ -14,6 +14,7 @@ const SubmitForm = () => {
     machinename: "",
     machinecode: "",
     machineplacecode: "",
+    worktype: "Mechanic",
     stoptime: "",
     failuretime: "",
     shift: "A",
@@ -43,6 +44,7 @@ const SubmitForm = () => {
         }
       );
       if (response.data.status === "success") {
+        alert("فرم با موفقیت ثبت شد");
         navigate("/submitform");
       }
     } catch (error) {
@@ -223,6 +225,28 @@ const SubmitForm = () => {
                           }
                           required
                         />
+                      </div>
+                      <div className="input-field">
+                        <label
+                          htmlFor="worktype"
+                          className="flex justify-center items-center"
+                        >
+                          شیفت
+                        </label>
+                        <select
+                          name="worktype"
+                          className="text-center"
+                          id="worktype"
+                          onChange={(e) =>
+                            setValues({ ...values, worktype: e.target.value })
+                          }
+                          required
+                        >
+                          <option value="mechanic">Mechanic</option>
+                          <option value="electric">Electric</option>
+                          <option value="utility">Utility</option>
+                          <option value="metalworking">Metal Working</option>
+                        </select>
                       </div>
                       <div className="input-field">
                         <label

@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
-import OperatorLogin from "./pages/OperatorLogin";
-import TechnicianLogin from "./pages/TechnicianLogin";
+import MechanicLogin from "./pages/MechanicLogin";
+import ElectricLogin from "./pages/ElectricLogin";
 import AdminLogin from "./pages/AdminLogin";
 import LoginMainForm from "./components/LoginMainForm";
 import Register from "./components/RegisterUser";
 import AdminDashboard from "./pages/AdminDashboard";
-import OperatorDashboard from "./pages/OperatorDashboard";
-import TechnicianDashboard from "./pages/TechnicianDashboard";
+import MechanicDashboard from "./pages/MechanicDashboard";
+import ElectricDashboard from "./pages/ElectricDashboard";
 import Start from "./pages/StartPage";
 import Sidebar from "./components/Sidebar";
 import SubmitForm from "./pages/SubmitForm";
@@ -42,8 +42,8 @@ function App() {
       "/login",
       "/register",
       "/adminlogin",
-      "/operatorlogin",
-      "/technicianlogin",
+      "/mechanic",
+      "/electric",
     ].includes(location.pathname);
 
   if (loading) {
@@ -69,8 +69,8 @@ function App() {
           />
           <Route path="/register" element={<Register />} />
           <Route path="/adminlogin" element={<AdminLogin />} />
-          <Route path="/operatorlogin" element={<OperatorLogin />} />
-          <Route path="/technicianlogin" element={<TechnicianLogin />} />
+          <Route path="/mechanicdashboard" element={<MechanicDashboard />} />
+          <Route path="/electricdashboard" element={<ElectricDashboard />} />
           <Route
             path="/admindashboard"
             element={
@@ -78,15 +78,15 @@ function App() {
             }
           />
           <Route
-            path="/operatordashboard"
+            path="/mechanicdashboard"
             element={
-              isLoggedIn ? <OperatorDashboard /> : <Navigate to={"/login"} />
+              isLoggedIn ? <MechanicLogin /> : <Navigate to={"/login"} />
             }
           />
           <Route
-            path="/techniciandashboard"
+            path="/electricdashboard"
             element={
-              isLoggedIn ? <TechnicianDashboard /> : <Navigate to={"/login"} />
+              isLoggedIn ? <ElectricLogin /> : <Navigate to={"/login"} />
             }
           />
           <Route path="/submitform" element={<SubmitForm />} />

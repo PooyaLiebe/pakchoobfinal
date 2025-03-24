@@ -5,52 +5,6 @@ import { BarChart2, FormInput, Menu, Power } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Tooltip } from "@mui/material";
 
-// const ADMIN_SIDEBAR = [
-//   { name: "Dashboard", icon: BarChart2, color: "#6366f1", href: "/dashboard" },
-//   {
-//     name: "Submit Form",
-//     icon: FormInput,
-//     color: "#6366f1",
-//     href: "/submitform",
-//   },
-//   { name: "Forms", icon: FormInput, color: "#6366f1", href: "/forms" },
-//   { name: "Pm Forms", icon: FormInput, color: "#6366f1", href: "/pmforms" },
-//   { name: "Pm Submit", icon: FormInput, color: "#6366f1", href: "/pmsubmit" },
-// ];
-
-// const TECHNICIAN_SIDEBAR = [
-//   {
-//     name: "Technician Dashboard",
-//     icon: BarChart2,
-//     color: "#6366f1",
-//     href: "/techniciandashboard",
-//   },
-//   {
-//     name: "Technician Submit",
-//     icon: FormInput,
-//     color: "#6366f1",
-//     href: "/techniciansubmit",
-//   },
-//   { name: "Forms", icon: FormInput, color: "#6366f1", href: "/forms" },
-//   { name: "Pm Forms", icon: FormInput, color: "#6366f1", href: "/pmforms" },
-// ];
-
-// const OPERATOR_SIDEBAR = [
-//   {
-//     name: "Operator Dashboard",
-//     icon: BarChart2,
-//     color: "#6366f1",
-//     href: "/operatordashboard",
-//   },
-//   {
-//     name: "Operator Submit",
-//     icon: FormInput,
-//     color: "#6366f1",
-//     href: "/operatorsubmit",
-//   },
-//   { name: "Forms", icon: FormInput, color: "#6366f1", href: "/forms" },
-// ];
-
 const Sidebar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [userType, setUserType] = useState(null);
@@ -69,7 +23,7 @@ const Sidebar = () => {
   };
 
   useEffect(() => {
-    if (userType === "admin") {
+    if (userType === "pm") {
       setMenuItems([
         {
           name: "Dashboard",
@@ -103,7 +57,7 @@ const Sidebar = () => {
           href: "/logout",
         },
       ]);
-    } else if (userType === "technician") {
+    } else if (userType === "mechanic") {
       setMenuItems([
         {
           name: "Technician Dashboard",
@@ -131,7 +85,73 @@ const Sidebar = () => {
           href: "/logout",
         },
       ]);
-    } else if (userType === "operator") {
+    } else if (userType === "electric") {
+      setMenuItems([
+        {
+          name: "Operator Dashboard",
+          icon: BarChart2,
+          color: "#6366f1",
+          href: "/operatordashboard",
+        },
+        {
+          name: "Operator Submit",
+          icon: FormInput,
+          color: "#6366f1",
+          href: "/operatorsubmit",
+        },
+        { name: "Forms", icon: FormInput, color: "#6366f1", href: "/forms" },
+        {
+          name: "Logout",
+          icon: Power,
+          color: "#6366f1",
+          href: "/logout",
+        },
+      ]);
+    } else if (userType === "utility") {
+      setMenuItems([
+        {
+          name: "Operator Dashboard",
+          icon: BarChart2,
+          color: "#6366f1",
+          href: "/operatordashboard",
+        },
+        {
+          name: "Operator Submit",
+          icon: FormInput,
+          color: "#6366f1",
+          href: "/operatorsubmit",
+        },
+        { name: "Forms", icon: FormInput, color: "#6366f1", href: "/forms" },
+        {
+          name: "Logout",
+          icon: Power,
+          color: "#6366f1",
+          href: "/logout",
+        },
+      ]);
+    } else if (userType === "production") {
+      setMenuItems([
+        {
+          name: "Operator Dashboard",
+          icon: BarChart2,
+          color: "#6366f1",
+          href: "/operatordashboard",
+        },
+        {
+          name: "Operator Submit",
+          icon: FormInput,
+          color: "#6366f1",
+          href: "/operatorsubmit",
+        },
+        { name: "Forms", icon: FormInput, color: "#6366f1", href: "/forms" },
+        {
+          name: "Logout",
+          icon: Power,
+          color: "#6366f1",
+          href: "/logout",
+        },
+      ]);
+    } else if (userType === "metalworking") {
       setMenuItems([
         {
           name: "Operator Dashboard",

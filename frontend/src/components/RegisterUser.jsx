@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -6,7 +7,7 @@ import "../styles/Register.css";
 const Register = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [userType, setUserType] = useState("admin");
+  const [userType, setUserType] = useState("pm");
   const [message, setMessage] = useState("");
 
   const navigate = useNavigate();
@@ -24,7 +25,7 @@ const Register = () => {
 
       if (response.data.status === "success") {
         setMessage("User registered successfully!");
-        navigate("/login");
+        // navigate("/login");
       }
     } catch (error) {
       setMessage(error.response?.data?.message || "Registration failed");
@@ -57,9 +58,12 @@ const Register = () => {
           required
         />
         <select value={userType} onChange={(e) => setUserType(e.target.value)}>
-          <option value="operator">Operator</option>
-          <option value="technician">Technician</option>
-          <option value="admin">Admin</option>
+          <option value="pm">PM</option>
+          <option value="mechanic">Mechanic</option>
+          <option value="electric">Electric</option>
+          <option value="utility">Utility</option>
+          <option value="metalworking">Metal Working</option>
+          <option value="production">Production</option>
         </select>
         <button type="submit">Register</button>
       </form>

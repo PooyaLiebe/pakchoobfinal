@@ -8,6 +8,21 @@ import axios from "axios";
 const FormTable = () => {
   const [submitform, setSubmitform] = useState([]);
 
+  useEffect(() => {
+    const getForm = async () => {
+      try {
+        const res = await axios.get(
+          "http://127.0.0.1:8000/api/submitform/list/"
+        );
+        console.log("API Response:", res.data);
+        setSubmitform(res.data);
+      } catch (err) {
+        console.error("Error Fetching data:", err);
+      }
+    };
+
+    getForm();
+  }, []);
   return (
     <motion.div
       className="bg-gray-800 bg-opacity-50 backdrop-blur-md shadow-lg p-6 border border-gray-700 mb-8 rounded"
@@ -16,7 +31,9 @@ const FormTable = () => {
       transition={{ duration: 0.2 }}
     >
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold text-gray-100">Form list</h2>
+        <h2 className="text-xl font-semibold text-gray-100">
+          لیست تمامی فرم ها
+        </h2>
       </div>
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-700">
@@ -42,6 +59,9 @@ const FormTable = () => {
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                 Machine Place Code
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                Work Type
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                 Stop Time
@@ -95,6 +115,9 @@ const FormTable = () => {
                 </td>
                 <td className="px-6 py-4 text-gray-300">
                   {form.machineplacecode || "N/A"}
+                </td>
+                <td className="px-6 py-4 text-gray-300">
+                  {form.worktype || "N/A"}
                 </td>
                 <td className="px-6 py-4 text-gray-300">
                   {form.stoptime || "N/A"}

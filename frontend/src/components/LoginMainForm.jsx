@@ -31,14 +31,23 @@ const LoginMainForm = ({ userType }) => {
 
         // Navigate to the corresponding page
         switch (response.data.user_type) {
-          case "operator":
-            navigate("/operatordashboard");
-            break;
-          case "technician":
-            navigate("/techniciandashboard");
-            break;
-          case "admin":
+          case "pm":
             navigate("/admindashboard");
+            break;
+          case "electric":
+            navigate("/electricdashboard");
+            break;
+          case "mechanic":
+            navigate("/mechanicdashboard");
+            break;
+          case "utility":
+            navigate("/utilitydashboard");
+            break;
+          case "production":
+            navigate("/productiondashboard");
+            break;
+          case "metalworking":
+            navigate("/metalworkingdashboard");
             break;
           default:
             console.warn("Unknown user type:", response.data.user_type);

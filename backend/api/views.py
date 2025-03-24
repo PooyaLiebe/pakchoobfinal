@@ -16,7 +16,7 @@ from .models import SubmitForm
 
 User = get_user_model()
 
-@api_view(["POST"])
+@api_view(["POST","GET"])
 @permission_classes([AllowAny])
 def FormListCreate(request):
     # Extract data from the request
@@ -25,6 +25,7 @@ def FormListCreate(request):
     machinename = request.data.get("machinename")
     machinecode = request.data.get("machinecode")
     machineplacecode = request.data.get("machineplacecode")
+    worktype = request.data.get('worktype')
     stoptime = request.data.get("stoptime")
     failuretime = request.data.get("failuretime")
     operatorname = request.data.get("operatorname")
@@ -59,6 +60,7 @@ def FormListCreate(request):
             machinename=machinename,
             machinecode=machinecode,
             machineplacecode=machineplacecode,
+            worktype = worktype,
             stoptime=stoptime,
             failuretime=failuretime,
             operatorname=operatorname,
@@ -77,6 +79,12 @@ def FormListCreate(request):
     except Exception as e:
         return Response({"status": "error", "message": str(e)}, status=500)
 
+class SubmitFormListView(APIView):
+    permission_classes = [AllowAny]  # This allows access to all users, authenticated or not
+    def get(self, request):
+        forms = SubmitForm.objects.all()
+        serializer = SubmitFormSerializer(forms, many=True)
+        return Response(serializer.data)
 
 class FormDelete(generics.DestroyAPIView):
     serializer_class = SubmitFormSerializer
@@ -115,7 +123,7 @@ def register_view(request):
             {"status": "error", "message": "All fields are required"}, status=400
         )
 
-    if user_type not in ["operator", "technician", "admin"]:
+    if user_type not in ["pm", "mechanic", "electric",'utility','production','metalworking']:
         return Response({"status": "error", "message": "Invalid user type"}, status=400)
 
     if User.objects.filter(username=username).exists():
@@ -138,3 +146,4 @@ def register_view(request):
             "token": token.key,
         }
     )
+

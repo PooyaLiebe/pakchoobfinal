@@ -1,7 +1,7 @@
 import React from "react";
 import Login from "../components/LoginMainForm";
-const OperatorLogin = () => {
+const MechanicLogin = () => {
   return <Login userType={"operator"} />;
 };
 
-export default OperatorLogin;
+export default MechanicLogin;

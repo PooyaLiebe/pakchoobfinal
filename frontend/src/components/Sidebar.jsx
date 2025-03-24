@@ -39,16 +39,16 @@ const Sidebar = () => {
         },
         { name: "Forms", icon: FormInput, color: "#6366f1", href: "/forms" },
         {
-          name: "Pm Forms",
-          icon: FormInput,
-          color: "#6366f1",
-          href: "/pmforms",
-        },
-        {
-          name: "Pm Submit",
+          name: "PM Submit",
           icon: FormInput,
           color: "#6366f1",
           href: "/pmsubmit",
+        },
+        {
+          name: "PM Forms",
+          icon: FormInput,
+          color: "#6366f1",
+          href: "/pmforms",
         },
         {
           name: "Logout",
@@ -111,7 +111,7 @@ const Sidebar = () => {
           href: "/electricform",
         },
         {
-          name: "Pm Forms",
+          name: "PM Forms",
           icon: FormInput,
           color: "#6366f1",
           href: "/pmforms",

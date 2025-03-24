@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Edit, Search, Send, Trash } from "lucide-react";
 import { Tooltip } from "@mui/material";
 import axios from "axios";
+import api from "../api";
 
 const FormTable = () => {
   const [submitform, setSubmitform] = useState([]);
@@ -28,9 +29,7 @@ const FormTable = () => {
 
   const getForm = async () => {
     try {
-      const res = await axios.get(
-        "https://planningmaintenance.ir/api/submitform/list/"
-      );
+      const res = await api.get("/api/submitform/list/");
       console.log("API Response:", res.data);
       setSubmitform(res.data);
     } catch (err) {
@@ -44,9 +43,7 @@ const FormTable = () => {
 
   const handleDelete = async (id) => {
     try {
-      const res = await axios.delete(
-        `https://planningmaintenance.ir/api/submitform/delete/${id}/`
-      );
+      const res = await api.delete(`/api/submitform/delete/${id}/`);
 
       if (res.status === 204) {
         alert("Form Deleted");
@@ -66,17 +63,14 @@ const FormTable = () => {
 
   const handleSendModal = async () => {
     try {
-      const res = await axios.post(
-        "https://planningmaintenance.ir/api/forms/send",
-        {
-          user_type: modalInput1.sendworktype, // The user_type selected in the modal
-          form_data: {
-            // Include relevant data to be sent
-            field1: modalInput2,
-            field2: modalInput3,
-          },
-        }
-      );
+      const res = await api.post("/api/forms/send", {
+        user_type: modalInput1.sendworktype, // The user_type selected in the modal
+        form_data: {
+          // Include relevant data to be sent
+          field1: modalInput2,
+          field2: modalInput3,
+        },
+      });
       if (res.status === 200 || res.status === 201) {
         alert("Data sent successfully!");
       } else {

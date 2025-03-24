@@ -18,26 +18,20 @@ SECRET_KEY = "django-insecure-$d5noih4@jy3%ihlf7y)xa$%kk$4wyar9wg@5g9dcta-%x-t)y
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    "http://localhost:5174",
-    "http://127.0.0.1:8000",
+    "localhost",
     "127.0.0.1",
     "planningmaintenance.ir",
-    "https://planningmaintenance.ir/",
 ]
 
-
 CSRF_TRUSTED_ORIGINS = [
+    "https://planningmaintenance.ir",
     "http://localhost:5174",
-    "https://planningmaintenance.ir/",
-    "http://127.0.0.1",
-    "http://localhost:3000",  # Or the origin of your React app
     "http://127.0.0.1:3000",
 ]
 
+CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5174",
-    "http://127.0.0.1",
-    "http://localhost:3000",  # Or the origin of your React app
     "http://127.0.0.1:3000",
 ]
 

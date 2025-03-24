@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../styles/Register.css";
+import api from "../api";
 
 const Register = () => {
   const [username, setUsername] = useState("");
@@ -17,14 +18,11 @@ const Register = () => {
     setMessage("");
 
     try {
-      const response = await axios.post(
-        "https://planningmaintenance.ir/api/register/",
-        {
-          username,
-          password,
-          user_type: userType,
-        }
-      );
+      const response = await api.post("/api/register/", {
+        username,
+        password,
+        user_type: userType,
+      });
 
       if (response.data.status === "success") {
         setMessage("User registered successfully!");

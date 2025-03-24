@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import "../styles/SubmitForm.css";
 import { motion } from "framer-motion";
 import Header from "../components/Common/Header";
+import api from "../api.js";
+
 const SubmitForm = () => {
   const [values, setValues] = useState({
     formcode: "",
@@ -36,13 +38,9 @@ const SubmitForm = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post(
-        "https://planningmaintenance.ir/api/submitform/",
-        values,
-        {
-          user_type: userType,
-        }
-      );
+      const response = await api.post("/api/submitform/", values, {
+        user_type: userType,
+      });
       if (response.data.status === "success") {
         alert("فرم با موفقیت ثبت شد");
         navigate("/submitform");

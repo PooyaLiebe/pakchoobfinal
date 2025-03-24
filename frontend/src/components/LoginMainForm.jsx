@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import "../styles/Login.css";
 import { useNavigate } from "react-router-dom";
+import api from "../api";
 
 const LoginMainForm = ({ userType }) => {
   const [username, setUsername] = useState("");
@@ -17,13 +18,10 @@ const LoginMainForm = ({ userType }) => {
 
     try {
       // Send the login request
-      const response = await axios.post(
-        "https://planningmaintenance.ir/api/login/",
-        {
-          username,
-          password,
-        }
-      );
+      const response = await api.post("/api/login/", {
+        username,
+        password,
+      });
 
       // Check response and handle navigation
       if (response.data.token) {

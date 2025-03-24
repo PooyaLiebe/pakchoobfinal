@@ -113,6 +113,38 @@ class FormDelete(generics.DestroyAPIView):
     permission_classes = [AllowAny]
 
 
+class SendDataView(APIView):
+    def post(self, request, *args, **kwargs):
+        try:
+            user_type = request.data.get("user_type")
+            form_data = request.data.get("form_data")
+
+            if not user_type:
+                return Response({"error": "User type is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Logic to handle data based on user_type
+            # You can customize this logic as per your requirements
+            if user_type == "mechanic":
+                # Save data for mechanic
+                pass
+            elif user_type == "electric":
+                # Save data for electric
+                pass
+            elif user_type == "production":
+                # Save data for production
+                pass
+            elif user_type == "utility":
+                # Save data for utility
+                pass
+            else:
+                return Response({"error": "Invalid user type."}, status=status.HTTP_400_BAD_REQUEST)
+
+            return Response({"message": "Data sent successfully."}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def login_view(request):

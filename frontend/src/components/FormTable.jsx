@@ -48,6 +48,29 @@ const FormTable = () => {
     }
   };
 
+  const handleSendModal = async () => {
+    try {
+      const res = await axios.post("http://127.0.0.1:8000/api/forms/send", {
+        user_type: modalInput1.sendworktype, // The user_type selected in the modal
+        form_data: {
+          // Include relevant data to be sent
+          field1: modalInput2,
+          field2: modalInput3,
+        },
+      });
+      if (res.status === 200 || res.status === 201) {
+        alert("Data sent successfully!");
+      } else {
+        alert("Failed to send data.");
+      }
+    } catch (err) {
+      console.error("Error sending data:", err);
+      alert("Error occurred while sending data.");
+    } finally {
+      closeModal(); // Close the modal after sending
+    }
+  };
+
   const openModal = () => {
     setIsModalOpen(true);
   };
@@ -251,10 +274,7 @@ const FormTable = () => {
           <div className="mt-5 flex justify-center">
             <button
               className="cursor-pointer px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 focus:outline-none focus:shadow-outline mr-2"
-              onClick={() => {
-                closeModal;
-                console.log(modalInput1);
-              }}
+              onClick={handleSendModal}
             >
               ارسال
             </button>

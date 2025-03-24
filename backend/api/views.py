@@ -4,9 +4,9 @@ from django.utils.timezone import now
 from django.contrib.auth import authenticate, login, get_user_model
 from django.http import JsonResponse
 from rest_framework.views import APIView
-from rest_framework import generics,status , permissions
+from rest_framework import generics, status, permissions
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny,IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import PermissionDenied
@@ -17,7 +17,8 @@ from .models import SubmitForm
 
 User = get_user_model()
 
-@api_view(["POST","GET"])
+
+@api_view(["POST", "GET"])
 @permission_classes([AllowAny])
 def FormListCreate(request):
     # Extract data from the request
@@ -26,7 +27,7 @@ def FormListCreate(request):
     machinename = request.data.get("machinename")
     machinecode = request.data.get("machinecode")
     machineplacecode = request.data.get("machineplacecode")
-    worktype = request.data.get('worktype')
+    worktype = request.data.get("worktype")
     stoptime = request.data.get("stoptime")
     failuretime = request.data.get("failuretime")
     operatorname = request.data.get("operatorname")
@@ -51,7 +52,9 @@ def FormListCreate(request):
         problemdate = problemdate if problemdate else None
         stoptime = stoptime if stoptime else None
     except ValueError:
-        return Response({"status": "error", "message": "Invalid date format"}, status=400)
+        return Response(
+            {"status": "error", "message": "Invalid date format"}, status=400
+        )
 
     # Save form submission to the database
     try:
@@ -61,7 +64,7 @@ def FormListCreate(request):
             machinename=machinename,
             machinecode=machinecode,
             machineplacecode=machineplacecode,
-            worktype = worktype,
+            worktype=worktype,
             stoptime=stoptime,
             failuretime=failuretime,
             operatorname=operatorname,
@@ -80,14 +83,19 @@ def FormListCreate(request):
     except Exception as e:
         return Response({"status": "error", "message": str(e)}, status=500)
 
+
 class SubmitFormListView(APIView):
-    permission_classes = [AllowAny]  # This allows access to all users, authenticated or not
+    permission_classes = [
+        AllowAny
+    ]  # This allows access to all users, authenticated or not
+
     def get(self, request):
         forms = SubmitForm.objects.all()
         serializer = SubmitFormSerializer(forms, many=True)
         return Response(serializer.data)
 
-@api_view(['DELETE'])
+
+@api_view(["DELETE"])
 @permission_classes([AllowAny])
 def delete_form(request, pk):
     try:
@@ -103,8 +111,8 @@ class IsPm(permissions.BasePermission):
     def has_permission(self, request, view):
         if not request.user.is_authenticated:
             return False
-        
-        return request.user.group.filter(name='pm').exists()
+
+        return request.user.group.filter(name="pm").exists()
 
 
 class FormDelete(generics.DestroyAPIView):
@@ -120,7 +128,10 @@ class SendDataView(APIView):
             form_data = request.data.get("form_data")
 
             if not user_type:
-                return Response({"error": "User type is required."}, status=status.HTTP_400_BAD_REQUEST)
+                return Response(
+                    {"error": "User type is required."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
             # Logic to handle data based on user_type
             # You can customize this logic as per your requirements
@@ -137,12 +148,18 @@ class SendDataView(APIView):
                 # Save data for utility
                 pass
             else:
-                return Response({"error": "Invalid user type."}, status=status.HTTP_400_BAD_REQUEST)
+                return Response(
+                    {"error": "Invalid user type."}, status=status.HTTP_400_BAD_REQUEST
+                )
 
-            return Response({"message": "Data sent successfully."}, status=status.HTTP_200_OK)
+            return Response(
+                {"message": "Data sent successfully."}, status=status.HTTP_200_OK
+            )
 
         except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 @api_view(["POST"])
@@ -171,7 +188,14 @@ def register_view(request):
             {"status": "error", "message": "All fields are required"}, status=400
         )
 
-    if user_type not in ["pm", "mechanic", "electric",'utility','production','metalworking']:
+    if user_type not in [
+        "pm",
+        "mechanic",
+        "electric",
+        "utility",
+        "production",
+        "metalworking",
+    ]:
         return Response({"status": "error", "message": "Invalid user type"}, status=400)
 
     if User.objects.filter(username=username).exists():
@@ -194,4 +218,3 @@ def register_view(request):
             "token": token.key,
         }
     )
-

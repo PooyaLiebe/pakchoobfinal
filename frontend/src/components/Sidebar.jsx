@@ -63,7 +63,7 @@ const Sidebar = () => {
           name: "Technician Dashboard",
           icon: BarChart2,
           color: "#6366f1",
-          href: "/techniciandashboard",
+          href: "/admindashboard",
         },
         {
           name: "Technician Submit",
@@ -71,7 +71,12 @@ const Sidebar = () => {
           color: "#6366f1",
           href: "/techniciansubmit",
         },
-        { name: "Forms", icon: FormInput, color: "#6366f1", href: "/forms" },
+        {
+          name: "Forms",
+          icon: FormInput,
+          color: "#6366f1",
+          href: "/mechanicform",
+        },
         {
           name: "Pm Forms",
           icon: FormInput,

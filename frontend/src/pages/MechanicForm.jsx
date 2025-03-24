@@ -6,7 +6,7 @@ import { Zap } from "lucide-react";
 import StatCard from "../components/Common/StatCard";
 import FormTable from "../components/FormTable";
 
-const Forms = () => {
+const MechanicForm = () => {
   return (
     <div className="flex-1 overflow-auto relative z-10">
       <Header title="Forms" />
@@ -32,4 +32,4 @@ const Forms = () => {
   );
 };
 
-export default Forms;
+export default MechanicForm;

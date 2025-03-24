@@ -165,7 +165,9 @@ const FormTable = () => {
             {submitform.map((form) => (
               <motion.tr key={form.id}>
                 <td className="px-6 py-4 text-gray-100">{form.formcode}</td>
-                <td className="px-6 py-4 text-gray-300">{form.problemdate}</td>
+                <td className="px-6 py-4 text-gray-300">
+                  {new Date(form.problemdate).toLocaleString()}
+                </td>
                 <td className="px-6 py-4 text-gray-300">
                   {form.productionstop || "N/A"}
                 </td>
@@ -183,7 +185,7 @@ const FormTable = () => {
                   {form.worktype || "N/A"}
                 </td>
                 <td className="px-6 py-4 text-gray-300">
-                  {form.stoptime || "N/A"}
+                  {new Date(form.stoptime).toLocaleString()}
                 </td>
                 <td className="px-6 py-4 text-gray-300">
                   {form.failuretime || "N/A"}

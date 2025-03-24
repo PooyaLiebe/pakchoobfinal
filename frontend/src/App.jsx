@@ -14,6 +14,7 @@ import SubmitForm from "./pages/SubmitForm";
 import Forms from "./pages/Forms";
 import UtilityDashboard from "./pages/UtilityDashboard";
 import ProductionDashboard from "./pages/ProductionDashboard";
+import MechanicForm from "./pages/MechanicForm";
 
 function Logout() {
   localStorage.clear();
@@ -68,6 +69,10 @@ function App() {
           <Route path="/electricdashboard" element={<ElectricDashboard />} />
           <Route path="/utilitydashboard" element={<UtilityDashboard />} />
           <Route
+            path="/mechanicform"
+            element={<MechanicForm user_type="mechanic" />}
+          />
+          <Route
             path="/productiondashboard"
             element={<ProductionDashboard />}
           />
@@ -92,6 +97,7 @@ function App() {
           <Route path="/submitform" element={<SubmitForm />} />
           <Route path="/logout" element={<Logout />} />
           <Route path="/forms" element={<Forms />} />
+          <Route path="/mechanicform" element={<MechanicForm />} />
         </Routes>
       </div>
     </div>

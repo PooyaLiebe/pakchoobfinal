@@ -17,11 +17,14 @@ const Register = () => {
     setMessage("");
 
     try {
-      const response = await axios.post("http://127.0.0.1:8000/api/register/", {
-        username,
-        password,
-        user_type: userType,
-      });
+      const response = await axios.post(
+        "https://planningmaintenance.ir/api/register/",
+        {
+          username,
+          password,
+          user_type: userType,
+        }
+      );
 
       if (response.data.status === "success") {
         setMessage("User registered successfully!");

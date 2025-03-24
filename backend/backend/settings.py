@@ -17,20 +17,27 @@ SECRET_KEY = "django-insecure-$d5noih4@jy3%ihlf7y)xa$%kk$4wyar9wg@5g9dcta-%x-t)y
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["http://localhost:5174", "http://127.0.0.1:8000",'127.0.0.1']
+ALLOWED_HOSTS = [
+    "http://localhost:5174",
+    "http://127.0.0.1:8000",
+    "127.0.0.1",
+    "planningmaintenance.ir",
+    "https://planningmaintenance.ir/",
+]
 
 
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5174",
+    "https://planningmaintenance.ir/",
     "http://127.0.0.1",
-    "http://localhost:3000", # Or the origin of your React app
+    "http://localhost:3000",  # Or the origin of your React app
     "http://127.0.0.1:3000",
 ]
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5174",
     "http://127.0.0.1",
-    "http://localhost:3000", # Or the origin of your React app
+    "http://localhost:3000",  # Or the origin of your React app
     "http://127.0.0.1:3000",
 ]
 
@@ -48,7 +55,7 @@ SIMPLE_JWT = {
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
 }
 
-AUTH_USER_MODEL = "api.LoginUser"
+AUTH_USER_MODEL = "api.loginuser"
 AUTHENTICATION_BACKENDS = [
     "api.auth_backend.LoginUserBackend",
     "django.contrib.auth.backends.ModelBackend",
@@ -57,7 +64,7 @@ AUTHENTICATION_BACKENDS = [
 # Application definition
 
 INSTALLED_APPS = [
-    'jazzmin',
+    "jazzmin",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",

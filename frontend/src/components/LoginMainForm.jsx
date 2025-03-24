@@ -17,10 +17,13 @@ const LoginMainForm = ({ userType }) => {
 
     try {
       // Send the login request
-      const response = await axios.post("http://127.0.0.1:8000/api/login/", {
-        username,
-        password,
-      });
+      const response = await axios.post(
+        "https://planningmaintenance.ir/api/login/",
+        {
+          username,
+          password,
+        }
+      );
 
       // Check response and handle navigation
       if (response.data.token) {

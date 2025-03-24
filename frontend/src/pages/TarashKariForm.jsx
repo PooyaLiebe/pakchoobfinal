@@ -34,7 +34,9 @@ const TarashKariForm = () => {
 
   const getForm = async () => {
     try {
-      const res = await axios.get("http://127.0.0.1:8000/api/submitform/list/");
+      const res = await axios.get(
+        "https://planningmaintenance.ir/api/submitform/list/"
+      );
       console.log("API Response:", res.data);
       setSubmitform(res.data);
     } catch (err) {
@@ -49,7 +51,7 @@ const TarashKariForm = () => {
   const handleDelete = async (id) => {
     try {
       const res = await axios.delete(
-        `http://127.0.0.1:8000/api/submitform/delete/${id}/`
+        `https://planningmaintenance.ir/api/submitform/delete/${id}/`
       );
 
       if (res.status === 204) {
@@ -70,14 +72,17 @@ const TarashKariForm = () => {
 
   const handleSendModal = async () => {
     try {
-      const res = await axios.post("http://127.0.0.1:8000/api/forms/send", {
-        user_type: modalInput1.sendworktype, // The user_type selected in the modal
-        form_data: {
-          // Include relevant data to be sent
-          field1: modalInput2,
-          field2: modalInput3,
-        },
-      });
+      const res = await axios.post(
+        "https://planningmaintenance.ir/api/forms/send",
+        {
+          user_type: modalInput1.sendworktype, // The user_type selected in the modal
+          form_data: {
+            // Include relevant data to be sent
+            field1: modalInput2,
+            field2: modalInput3,
+          },
+        }
+      );
       if (res.status === 200 || res.status === 201) {
         alert("Data sent successfully!");
       } else {

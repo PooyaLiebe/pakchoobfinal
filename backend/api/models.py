@@ -14,7 +14,7 @@ class LoginUser(AbstractUser):
         ("electric", "Electric"),
         ("tarashkari", "Tarashkari"),
     )
-    user_type = models.CharField(max_length=50, choices=USER_TYPE_CHOICE)
+    user_type = models.CharField(max_length=50, choices=USER_TYPE_CHOICE, default="pm")
 
 
 def __str__(self):
@@ -22,7 +22,7 @@ def __str__(self):
 
 
 class SubmitForm(models.Model):
-    formcode = models.CharField(max_length=100)
+    formcode = models.CharField(max_length=100,null=True)
     problemdate = models.DateTimeField(
         null=True
     )  # Changed to DateTimeField for user input

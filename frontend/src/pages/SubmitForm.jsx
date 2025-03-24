@@ -16,7 +16,7 @@ const SubmitForm = () => {
     machinename: "",
     machinecode: "",
     machineplacecode: "",
-    worktype: "Mechanic",
+    worktype: "mechanic",
     stoptime: "",
     failuretime: "",
     shift: "A",

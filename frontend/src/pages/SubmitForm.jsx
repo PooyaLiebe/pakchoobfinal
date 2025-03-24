@@ -52,6 +52,8 @@ const SubmitForm = () => {
     }
   };
 
+  const isStopTimeDisabled = values.productionstop === "خیر";
+
   return (
     <div className="flex-1 overflow-auto relative z-10">
       <Header title={"ثبت فرم"} />
@@ -231,7 +233,7 @@ const SubmitForm = () => {
                           htmlFor="worktype"
                           className="flex justify-center items-center"
                         >
-                          شیفت
+                          واحد مربوطه
                         </label>
                         <select
                           name="worktype"
@@ -264,6 +266,7 @@ const SubmitForm = () => {
                             setValues({ ...values, stoptime: e.target.value })
                           }
                           required
+                          disabled={isStopTimeDisabled}
                         />
                       </div>
                       <div className="input-field">

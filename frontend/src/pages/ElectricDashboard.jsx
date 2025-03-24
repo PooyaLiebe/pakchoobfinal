@@ -2,6 +2,9 @@
 import React from "react";
 import Header from "../components/Common/Header";
 import StatCard from "../components/Common/StatCard";
+import EmOverviewChart from "../components/Charts/EmOverviewChart";
+import FormOverviewPieChart from "../components/Charts/FormOverviewPieChart";
+import FormOverviewBarChart from "../components/Charts/FormOverviewBarChart";
 import { motion } from "framer-motion";
 import { Zap } from "lucide-react";
 
@@ -24,9 +27,9 @@ const TechnicianDashboard = () => {
         </motion.div>
         {/* CHARTS */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* <EmOverviewChart />
+          <EmOverviewChart />
           <FormOverviewPieChart />
-          <FormOverviewBarChart /> */}
+          <FormOverviewBarChart />
         </div>
       </main>
     </div>

@@ -88,18 +88,24 @@ const Sidebar = () => {
     } else if (userType === "electric") {
       setMenuItems([
         {
-          name: "Operator Dashboard",
+          name: "Electric Dashboard",
           icon: BarChart2,
           color: "#6366f1",
-          href: "/operatordashboard",
+          href: "/electricdashboard",
         },
         {
-          name: "Operator Submit",
+          name: "Technician Submit",
           icon: FormInput,
           color: "#6366f1",
-          href: "/operatorsubmit",
+          href: "/techniciansubmit",
         },
         { name: "Forms", icon: FormInput, color: "#6366f1", href: "/forms" },
+        {
+          name: "Pm Forms",
+          icon: FormInput,
+          color: "#6366f1",
+          href: "/pmforms",
+        },
         {
           name: "Logout",
           icon: Power,
@@ -110,18 +116,24 @@ const Sidebar = () => {
     } else if (userType === "utility") {
       setMenuItems([
         {
-          name: "Operator Dashboard",
+          name: "Technician Dashboard",
           icon: BarChart2,
           color: "#6366f1",
-          href: "/operatordashboard",
+          href: "/utilitydashboard",
         },
         {
-          name: "Operator Submit",
+          name: "Technician Submit",
           icon: FormInput,
           color: "#6366f1",
-          href: "/operatorsubmit",
+          href: "/techniciansubmit",
         },
         { name: "Forms", icon: FormInput, color: "#6366f1", href: "/forms" },
+        {
+          name: "Pm Forms",
+          icon: FormInput,
+          color: "#6366f1",
+          href: "/pmforms",
+        },
         {
           name: "Logout",
           icon: Power,
@@ -132,7 +144,7 @@ const Sidebar = () => {
     } else if (userType === "production") {
       setMenuItems([
         {
-          name: "Operator Dashboard",
+          name: "Production Dashboard",
           icon: BarChart2,
           color: "#6366f1",
           href: "/operatordashboard",
@@ -144,6 +156,12 @@ const Sidebar = () => {
           href: "/operatorsubmit",
         },
         { name: "Forms", icon: FormInput, color: "#6366f1", href: "/forms" },
+        {
+          name: "Pm Forms",
+          icon: FormInput,
+          color: "#6366f1",
+          href: "/pmforms",
+        },
         {
           name: "Logout",
           icon: Power,
@@ -154,18 +172,24 @@ const Sidebar = () => {
     } else if (userType === "metalworking") {
       setMenuItems([
         {
-          name: "Operator Dashboard",
+          name: "Metal Working Dashboard",
           icon: BarChart2,
           color: "#6366f1",
-          href: "/operatordashboard",
+          href: "/metalworkingdashboard",
         },
         {
-          name: "Operator Submit",
+          name: "Technician Submit",
           icon: FormInput,
           color: "#6366f1",
-          href: "/operatorsubmit",
+          href: "/techniciansubmit",
         },
         { name: "Forms", icon: FormInput, color: "#6366f1", href: "/forms" },
+        {
+          name: "Pm Forms",
+          icon: FormInput,
+          color: "#6366f1",
+          href: "/pmforms",
+        },
         {
           name: "Logout",
           icon: Power,

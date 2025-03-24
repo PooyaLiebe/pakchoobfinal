@@ -4,11 +4,12 @@ from django.utils.timezone import now
 from django.contrib.auth import authenticate, login, get_user_model
 from django.http import JsonResponse
 from rest_framework.views import APIView
-from rest_framework import generics,status
+from rest_framework import generics,status , permissions
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny,IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
+from rest_framework.exceptions import PermissionDenied
 from django.contrib.auth.hashers import make_password
 from .serializers import SubmitFormSerializer
 from .models import SubmitForm
@@ -86,15 +87,30 @@ class SubmitFormListView(APIView):
         serializer = SubmitFormSerializer(forms, many=True)
         return Response(serializer.data)
 
+@api_view(['DELETE'])
+@permission_classes([AllowAny])
+def delete_form(request, pk):
+    try:
+        form = SubmitForm.objects.get(pk=pk)
+    except SubmitForm.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    form.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class IsPm(permissions.BasePermission):
+    def has_permission(self, request, view):
+        if not request.user.is_authenticated:
+            return False
+        
+        return request.user.group.filter(name='pm').exists()
+
+
 class FormDelete(generics.DestroyAPIView):
+    queryset = SubmitForm.objects.all()
     serializer_class = SubmitFormSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        user = self.request.user
-        print('Authenticated user:', user)
-        return SubmitForm.objects.filter(author=user)
-
+    permission_classes = [AllowAny]
 
 
 @api_view(["POST"])

@@ -12,6 +12,8 @@ import Start from "./pages/StartPage";
 import Sidebar from "./components/Sidebar";
 import SubmitForm from "./pages/SubmitForm";
 import Forms from "./pages/Forms";
+import UtilityDashboard from "./pages/UtilityDashboard";
+import ProductionDashboard from "./pages/ProductionDashboard";
 
 function Logout() {
   localStorage.clear();
@@ -37,14 +39,7 @@ function App() {
 
   const showSidebar =
     isLoggedIn &&
-    ![
-      "/",
-      "/login",
-      "/register",
-      "/adminlogin",
-      "/mechanic",
-      "/electric",
-    ].includes(location.pathname);
+    !["/", "/login", "/register", "/adminlogin"].includes(location.pathname);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -71,6 +66,11 @@ function App() {
           <Route path="/adminlogin" element={<AdminLogin />} />
           <Route path="/mechanicdashboard" element={<MechanicDashboard />} />
           <Route path="/electricdashboard" element={<ElectricDashboard />} />
+          <Route path="/utilitydashboard" element={<UtilityDashboard />} />
+          <Route
+            path="/productiondashboard"
+            element={<ProductionDashboard />}
+          />
           <Route
             path="/admindashboard"
             element={

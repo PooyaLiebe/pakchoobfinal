@@ -7,13 +7,13 @@ import axios from "axios";
 import Header from "../components/Common/Header";
 import StatCard from "../components/Common/StatCard";
 
-const MechanicForm = () => {
+const TarashKariForm = () => {
   const [submitform, setSubmitform] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalInput1, setModalInput1] = useState("");
   const [modalInput2, setModalInput2] = useState("");
   const [modalInput3, setModalInput3] = useState("");
-  const [userType, setUserType] = useState("mechanic"); // Example, change based on actual user logic
+  const [userType, setUserType] = useState("tarashkari"); // Example, change based on actual user logic
 
   const filteredForms = submitform.filter((form) => {
     if (userType === "mechanic") {
@@ -22,6 +22,10 @@ const MechanicForm = () => {
       return form.worktype === "electric";
     } else if (userType === "production") {
       return form.worktype === "production";
+    } else if (userType === "tarashkari") {
+      return form.worktype === "tarashkari";
+    } else if (userType === "metalworking") {
+      return form.worktype === "metalworking";
     } else if (userType === "utility") {
       return form.worktype === "utility";
     }
@@ -329,4 +333,4 @@ const MechanicForm = () => {
   );
 };
 
-export default MechanicForm;
+export default TarashKariForm;

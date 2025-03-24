@@ -18,6 +18,17 @@ from .models import SubmitForm
 User = get_user_model()
 
 
+class SubmitFormDetailView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, pk):
+        submit_form = SubmitForm.objects.get(pk=pk)
+        serializer = SubmitFormSerializer(submit_form)
+        return Response(
+            {"form_data": serializer.data, "user_type": request.user.user_type}
+        )
+
+
 @api_view(["POST", "GET"])
 @permission_classes([AllowAny])
 def FormListCreate(request):

@@ -104,7 +104,12 @@ const Sidebar = () => {
           color: "#6366f1",
           href: "/techniciansubmit",
         },
-        { name: "Forms", icon: FormInput, color: "#6366f1", href: "/forms" },
+        {
+          name: "Forms",
+          icon: FormInput,
+          color: "#6366f1",
+          href: "/electricform",
+        },
         {
           name: "Pm Forms",
           icon: FormInput,
@@ -132,7 +137,12 @@ const Sidebar = () => {
           color: "#6366f1",
           href: "/techniciansubmit",
         },
-        { name: "Forms", icon: FormInput, color: "#6366f1", href: "/forms" },
+        {
+          name: "Forms",
+          icon: FormInput,
+          color: "#6366f1",
+          href: "/utilityform",
+        },
         {
           name: "Pm Forms",
           icon: FormInput,
@@ -160,7 +170,12 @@ const Sidebar = () => {
           color: "#6366f1",
           href: "/operatorsubmit",
         },
-        { name: "Forms", icon: FormInput, color: "#6366f1", href: "/forms" },
+        {
+          name: "Forms",
+          icon: FormInput,
+          color: "#6366f1",
+          href: "/productionform",
+        },
         {
           name: "Pm Forms",
           icon: FormInput,
@@ -188,7 +203,12 @@ const Sidebar = () => {
           color: "#6366f1",
           href: "/techniciansubmit",
         },
-        { name: "Forms", icon: FormInput, color: "#6366f1", href: "/forms" },
+        {
+          name: "Forms",
+          icon: FormInput,
+          color: "#6366f1",
+          href: "/metalworkingform",
+        },
         {
           name: "Pm Forms",
           icon: FormInput,

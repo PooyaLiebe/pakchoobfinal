@@ -11,6 +11,20 @@ const FormTable = () => {
   const [modalInput1, setModalInput1] = useState("");
   const [modalInput2, setModalInput2] = useState("");
   const [modalInput3, setModalInput3] = useState("");
+  const [userType, setUserType] = useState(""); // Example, change based on actual user logic
+
+  const filteredForms = submitform.filter((form) => {
+    if (userType === "mechanic") {
+      return form.worktype === "mechanic";
+    } else if (userType === "electric") {
+      return form.worktype === "electric";
+    } else if (userType === "production") {
+      return form.worktype === "production";
+    } else if (userType === "utility") {
+      return form.worktype === "utility";
+    }
+    return true; // If no match, show all
+  });
 
   const getForm = async () => {
     try {
@@ -162,7 +176,7 @@ const FormTable = () => {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-700">
-            {submitform.map((form) => (
+            {filteredForms.map((form) => (
               <motion.tr key={form.id}>
                 <td className="px-6 py-4 text-gray-100">{form.formcode}</td>
                 <td className="px-6 py-4 text-gray-300">

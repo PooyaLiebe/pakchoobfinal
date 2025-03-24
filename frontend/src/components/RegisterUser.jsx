@@ -64,6 +64,7 @@ const Register = () => {
           <option value="utility">Utility</option>
           <option value="metalworking">Metal Working</option>
           <option value="production">Production</option>
+          <option value="tarashkari">Tarash Kari</option>
         </select>
         <button type="submit">Register</button>
       </form>

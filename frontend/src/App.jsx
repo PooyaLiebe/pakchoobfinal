@@ -20,6 +20,7 @@ import ProductionForm from "./pages/ProductionForm";
 import UtilityForm from "./pages/UtilityForm";
 import TarashKariForm from "./pages/TarashKariForm";
 import MetalWorkingForm from "./pages/MetalWorkingForm";
+import TarashKariDashboard from "./pages/TarashKariDashboard";
 
 function Logout() {
   localStorage.clear();
@@ -73,6 +74,10 @@ function App() {
           <Route path="/mechanicdashboard" element={<MechanicDashboard />} />
           <Route path="/electricdashboard" element={<ElectricDashboard />} />
           <Route path="/utilitydashboard" element={<UtilityDashboard />} />
+          <Route
+            path="/tarashkaridashboard"
+            element={<TarashKariDashboard />}
+          />
           <Route
             path="/mechanicform"
             element={<MechanicForm user_type="mechanic" />}

@@ -248,6 +248,7 @@ const SubmitForm = () => {
                           <option value="electric">Electric</option>
                           <option value="utility">Utility</option>
                           <option value="metalworking">Metal Working</option>
+                          <option value="tarashkari">Tarash Kari</option>
                         </select>
                       </div>
                       <div className="input-field">

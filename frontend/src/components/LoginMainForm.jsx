@@ -49,6 +49,9 @@ const LoginMainForm = ({ userType }) => {
           case "metalworking":
             navigate("/metalworkingdashboard");
             break;
+          case "tarashkari":
+            navigate("/tarashkaridashboard");
+            break;
           default:
             console.warn("Unknown user type:", response.data.user_type);
             setError("Unknown user type. Contact support."); // Handle unknown types

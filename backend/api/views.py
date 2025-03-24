@@ -158,6 +158,9 @@ class SendDataView(APIView):
             elif user_type == "utility":
                 # Save data for utility
                 pass
+            elif user_type == "tarashkari":
+                # Save data for utility
+                pass
             else:
                 return Response(
                     {"error": "Invalid user type."}, status=status.HTTP_400_BAD_REQUEST
@@ -206,6 +209,7 @@ def register_view(request):
         "utility",
         "production",
         "metalworking",
+        "tarashkari",
     ]:
         return Response({"status": "error", "message": "Invalid user type"}, status=400)
 

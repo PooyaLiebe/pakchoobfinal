@@ -29,7 +29,7 @@ class SubmitForm(models.Model):
     machinename = models.CharField(max_length=100, null=True)
     machinecode = models.CharField(max_length=100, null=True)
     machineplacecode = models.CharField(max_length=100, default="MDF1")
-    worktype = models.CharField(max_length=20, default="Mechanic")
+    worktype = models.CharField(max_length=20, default="mechanic")
     stoptime = models.DateTimeField(null=True)  # Removed auto_now_add
     failuretime = models.CharField(max_length=20, null=True)  # Removed auto_now_add
     operatorname = models.CharField(max_length=100, null=True)

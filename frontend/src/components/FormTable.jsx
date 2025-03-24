@@ -228,7 +228,7 @@ const FormTable = () => {
                 <td className="px-6 py-4 text-gray-300">
                   {form.problemdescription || "N/A"}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                <td className="px-10 py-4 whitespace-nowrap text-sm text-gray-300">
                   {/* <Tooltip title={"Edit"} placement="top">
                     {" "}
                     <button className="text-indigo-400 hover:text-indigo-300 mr-2 cursor-pointer">
@@ -243,21 +243,21 @@ const FormTable = () => {
                       <Trash size={18} />
                     </button>
                   </Tooltip>
-                  <Tooltip title={"Send"} placement="top">
+                  {/* <Tooltip title={"Send"} placement="top">
                     <button
                       onClick={handleSend}
                       className="text-pink-500 hover:text-pink-300 cursor-pointer"
                     >
                       <Send size={18} />
                     </button>
-                  </Tooltip>
+                  </Tooltip> */}
                 </td>
               </motion.tr>
             ))}
           </tbody>
         </table>
       </div>
-      {isModalOpen && (
+      {/* {isModalOpen && (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-50 overflow-y-auto h-full w-full">
           <h3 className="flex justify-center mt-2 text-2xl font-mono">ارسال</h3>
           <div className="flex justify-center mt-7 font-mono">
@@ -304,7 +304,7 @@ const FormTable = () => {
             </button>
           </div>
         </div>
-      )}
+      )} */}
     </motion.div>
   );
 };

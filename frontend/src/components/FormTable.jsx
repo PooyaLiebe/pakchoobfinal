@@ -5,6 +5,7 @@ import { Edit, Search, Send, Trash } from "lucide-react";
 import { Tooltip } from "@mui/material";
 import axios from "axios";
 import api from "../api";
+import { Link, Navigate } from "react-router-dom";
 
 const FormTable = () => {
   const [submitform, setSubmitform] = useState([]);
@@ -242,14 +243,13 @@ const FormTable = () => {
                       <Trash size={18} />
                     </button>
                   </Tooltip>
-                  {/* <Tooltip title={"Send"} placement="top">
-                    <button
-                      onClick={handleSend}
-                      className="text-pink-500 hover:text-pink-300 cursor-pointer"
-                    >
-                      <Send size={18} />
-                    </button>
-                  </Tooltip> */}
+                  <Tooltip title={"Send"} placement="top">
+                    <Link to={"/techniciansubmit"}>
+                      <button className="text-pink-500 hover:text-pink-300 cursor-pointer">
+                        <Send size={18} />
+                      </button>
+                    </Link>
+                  </Tooltip>
                 </td>
               </motion.tr>
             ))}

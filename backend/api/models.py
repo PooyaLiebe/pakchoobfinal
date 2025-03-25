@@ -22,7 +22,7 @@ def __str__(self):
 
 
 class SubmitForm(models.Model):
-    formcode = models.CharField(max_length=100,null=True)
+    formcode = models.CharField(max_length=100, null=True)
     problemdate = models.DateTimeField(
         null=True
     )  # Changed to DateTimeField for user input

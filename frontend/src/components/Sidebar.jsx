@@ -37,6 +37,12 @@ const Sidebar = () => {
           color: "#6366f1",
           href: "/submitform",
         },
+        {
+          name: "Technician Submit",
+          icon: FormInput,
+          color: "#6366f1",
+          href: "/techniciansubmit",
+        },
         { name: "Forms", icon: FormInput, color: "#6366f1", href: "/forms" },
         {
           name: "PM Submit",

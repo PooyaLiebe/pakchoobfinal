@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import Header from "../components/Common/Header";
 import api from "../api.js";
 
-const sectionCodes = {
+const sectionCodes2 = {
   Chipper: "01",
   "Conveyor Line": "02",
   "Dryer & Air Grader": "03",
@@ -20,7 +20,14 @@ const sectionCodes = {
   "Steam Boiler": "10",
   General: "11",
 };
-
+const sectionCodes = {
+  Melamine: "01",
+  "High Glass": "05",
+  Formalin: "08",
+  Resin: "07",
+  "Purification Plant": "04",
+  Agheshte: "03",
+};
 const SubmitForm = () => {
   const [values, setValues] = useState({
     formcode: "",
@@ -67,17 +74,34 @@ const SubmitForm = () => {
   };
 
   const isStopTimeDisabled = values.productionstop === "خیر";
-  // Generic input change handler
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
 
-    setValues((prevValues) => ({
-      ...prevValues,
-      [name]: value,
-    }));
+  // Function to update section based on the phase
+  const getSectionCodes = () => {
+    return values.phase === "01" ? sectionCodes : sectionCodes2;
   };
 
-  // Update form code when phase, section, or problemdate changes
+  useEffect(() => {
+    const savedPhase = localStorage.getItem("phase");
+    if (savedPhase) {
+      setValues((prevValues) => ({
+        ...prevValues,
+        phase: savedPhase,
+        section: savedPhase === "01" ? "Chipper" : "Melamine", // Default section based on phase
+      }));
+    }
+  }, []);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setValues((prevValues) => {
+      const newValues = { ...prevValues, [name]: value };
+      if (name === "phase") {
+        localStorage.setItem("phase", value);
+        newValues.section = value === "01" ? "Chipper" : "Melamine"; // Default section based on phase
+      }
+      return newValues;
+    });
+  };
 
   return (
     <div className="flex-1 overflow-auto relative z-10">
@@ -124,7 +148,7 @@ const SubmitForm = () => {
                           className="outline-none text-12 w-[full] sm:w-full font-normal flex justify-center text-center  items-center rounded-md shadow-lg border-2"
                           id="problemdate"
                           value={values.problemdate}
-                          onChange={handleInputChange} // Use generic handler
+                          onChange={handleInputChange}
                           required
                         />
                       </div>
@@ -140,7 +164,7 @@ const SubmitForm = () => {
                           className="text-center"
                           id="phase"
                           value={values.phase}
-                          onChange={handleInputChange} // Use generic handler
+                          onChange={handleInputChange}
                           required
                         >
                           <option value="01">MDF1</option>
@@ -159,7 +183,7 @@ const SubmitForm = () => {
                           className="text-center"
                           id="productionstop"
                           value={values.productionstop}
-                          onChange={handleInputChange} // Use generic handler
+                          onChange={handleInputChange}
                           required
                         >
                           <option value="خیر">خیر</option>
@@ -178,10 +202,10 @@ const SubmitForm = () => {
                           id="section"
                           className="text-center"
                           value={values.section}
-                          onChange={handleInputChange} // Use generic handler
+                          onChange={handleInputChange}
                           required
                         >
-                          {Object.keys(sectionCodes).map((sectionName) => (
+                          {Object.keys(getSectionCodes()).map((sectionName) => (
                             <option key={sectionName} value={sectionName}>
                               {sectionName} {/* Displaying section name */}
                             </option>
@@ -202,7 +226,7 @@ const SubmitForm = () => {
                           id="machinename"
                           className="text-center"
                           value={values.machinename}
-                          onChange={handleInputChange} // Use generic handler
+                          onChange={handleInputChange}
                           required
                         />
                       </div>
@@ -220,7 +244,7 @@ const SubmitForm = () => {
                           id="machinecode"
                           className="text-center"
                           value={values.machinecode}
-                          onChange={handleInputChange} // Use generic handler
+                          onChange={handleInputChange}
                           required
                         />
                       </div>
@@ -238,7 +262,7 @@ const SubmitForm = () => {
                           id="machineplacecode"
                           className="text-center"
                           value={values.machineplacecode}
-                          onChange={handleInputChange} // Use generic handler
+                          onChange={handleInputChange}
                           required
                         />
                       </div>
@@ -254,7 +278,7 @@ const SubmitForm = () => {
                           className="text-center"
                           id="worktype"
                           value={values.worktype}
-                          onChange={handleInputChange} // Use generic handler
+                          onChange={handleInputChange}
                           required
                         >
                           <option value="mechanic">Mechanic</option>
@@ -277,7 +301,7 @@ const SubmitForm = () => {
                           id="stoptime"
                           className="outline-none text-14 w-full font-normal flex justify-center text-center items-center rounded-md shadow-lg border-2 p-2 h-11 m-2"
                           value={values.stoptime}
-                          onChange={handleInputChange} // Use generic handler
+                          onChange={handleInputChange}
                           required
                           disabled={isStopTimeDisabled}
                         />
@@ -296,7 +320,7 @@ const SubmitForm = () => {
                           className="text-center"
                           placeholder="میزان ساعت کار را وارد کنید"
                           value={values.failuretime}
-                          onChange={handleInputChange} // Use generic handler
+                          onChange={handleInputChange}
                           required
                         />
                       </div>
@@ -312,7 +336,7 @@ const SubmitForm = () => {
                           className="text-center"
                           id="shift"
                           value={values.shift}
-                          onChange={handleInputChange} // Use generic handler
+                          onChange={handleInputChange}
                           required
                         >
                           <option value="A">A</option>
@@ -332,7 +356,7 @@ const SubmitForm = () => {
                           className="text-center"
                           id="suggesttime"
                           value={values.suggesttime}
-                          onChange={handleInputChange} // Use generic handler
+                          onChange={handleInputChange}
                           required
                         >
                           <option value="فوری">فوری</option>
@@ -353,7 +377,7 @@ const SubmitForm = () => {
                           className="text-center"
                           id="worksuggest"
                           value={values.worksuggest}
-                          onChange={handleInputChange} // Use generic handler
+                          onChange={handleInputChange}
                           required
                         >
                           <option value="اضطراری">اضطراری</option>
@@ -379,7 +403,7 @@ const SubmitForm = () => {
                           className="text-center"
                           id="fixrepair"
                           value={values.fixrepair}
-                          onChange={handleInputChange} // Use generic handler
+                          onChange={handleInputChange}
                           required
                         >
                           <option value="درخواست اپراتور">
@@ -409,7 +433,7 @@ const SubmitForm = () => {
                           className="text-center"
                           id="reportinspection"
                           value={values.reportinspection}
-                          onChange={handleInputChange} // Use generic handler
+                          onChange={handleInputChange}
                           required
                         >
                           <option value="بازرسی فنی">بازرسی فنی</option>
@@ -430,7 +454,7 @@ const SubmitForm = () => {
                           className="text-center"
                           id="faultdm"
                           value={values.faultdm}
-                          onChange={handleInputChange} // Use generic handler
+                          onChange={handleInputChange}
                           required
                         >
                           <option value="اختلال در کارکرد">
@@ -469,7 +493,7 @@ const SubmitForm = () => {
                           className="text-center"
                           placeholder="نام اپراتور را وارد کنید"
                           value={values.operatorname}
-                          onChange={handleInputChange} // Use generic handler
+                          onChange={handleInputChange}
                           required
                         />
                       </div>
@@ -486,7 +510,7 @@ const SubmitForm = () => {
                           className="text-center"
                           placeholder="کلیات شرح عیب مشاهده شده را توضیح دهید : "
                           value={values.problemdescription}
-                          onChange={handleInputChange} // Use generic handler
+                          onChange={handleInputChange}
                           required
                         />
                       </div>

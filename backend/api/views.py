@@ -1,5 +1,5 @@
-import json
-from django.shortcuts import render
+import datetime
+from django.shortcuts import render, get_object_or_404
 from django.utils.timezone import now
 from django.contrib.auth import authenticate, login, get_user_model
 from django.http import JsonResponse
@@ -14,27 +14,52 @@ from django.contrib.auth.hashers import make_password
 from .serializers import SubmitFormSerializer
 from .models import SubmitForm
 
+SECTION_CODES= {
+    # MDF-2
+  "Chipper": "01",
+  "Conveyor Line": "02",
+  "Dryer & Air Grader": "03",
+  "Refiner": "04",
+  "Before Press": "05",
+  "Press": "06",
+  "After Press": "07",
+  "Sanding": "09",
+  "Cooling System": "08",
+  "Steam Boiler": "10",
+  "General": "11",
+  # MDF-1
+  "Melamine": "01",
+  "High Glass": '05',
+  "Formalin": '08',
+  'Resin': '07',
+  'Purification Plant': '04',
+  'Agheshte': "03"
+};
 
 User = get_user_model()
 
+def generate_formcode(phase, section_code, problemdate):
+    """Generate a unique form code based on phase, section code, and date."""
+    date_str = problemdate.strftime("%m")  # Format date as month
+    base_code = f"{phase}{section_code}{date_str}"
+    return base_code
 
 class SubmitFormDetailView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, pk):
-        submit_form = SubmitForm.objects.get(pk=pk)
+        submit_form = get_object_or_404(SubmitForm, pk=pk)
         serializer = SubmitFormSerializer(submit_form)
         return Response(
             {"form_data": serializer.data, "user_type": request.user.user_type}
         )
 
-
 @api_view(["POST", "GET"])
 @permission_classes([AllowAny])
 def FormListCreate(request):
     # Extract data from the request
-    formcode = request.data.get("formcode")
     problemdate = request.data.get("problemdate")
+    phase = request.data.get("phase")
     machinename = request.data.get("machinename")
     machinecode = request.data.get("machinecode")
     machineplacecode = request.data.get("machineplacecode")
@@ -53,25 +78,50 @@ def FormListCreate(request):
     problemdescription = request.data.get("problemdescription")
 
     # Validate required fields
-    if not formcode or not machinename or not machinecode or not operatorname:
+    if not machinename or not machinecode or not operatorname:
         return Response(
-            {"status": "error", "message": "Required fields are missing"}, status=400
+            {"status": "error", "message": "Required fields are missing"},
+            status=400,
         )
 
     # Parse problemdate and stoptime into datetime (example for validation)
+
+    section_code = SECTION_CODES.get(section)
+    if not section_code:
+        return Response(
+            {"status": "error", "message": "Invalid section name"},
+            status=400,
+        )
+
     try:
-        problemdate = problemdate if problemdate else None
+        problemdate = datetime.datetime.fromisoformat(problemdate) if problemdate else None
         stoptime = stoptime if stoptime else None
     except ValueError:
         return Response(
             {"status": "error", "message": "Invalid date format"}, status=400
         )
 
+    # 1. Generate the initial formcode
+    base_formcode = generate_formcode(phase, section_code, problemdate)
+    formcode = base_formcode + "01"  # Start with 01
+
+    # 2. Check for existing formcode and increment
+    while SubmitForm.objects.filter(formcode=formcode).exists():
+        last_two = int(formcode[-2:])
+        new_last_two = str(last_two + 1).zfill(2)
+        if last_two >= 99:
+            return Response(
+                {"status": "error", "message": "Reached maximum form code number"},
+                status=400,
+            )  # or modify the base_formcode
+        formcode = formcode[:-2] + new_last_two
+
     # Save form submission to the database
     try:
         form = SubmitForm.objects.create(
             formcode=formcode,
             problemdate=problemdate,
+            phase=phase,
             machinename=machinename,
             machinecode=machinecode,
             machineplacecode=machineplacecode,
@@ -90,7 +140,13 @@ def FormListCreate(request):
             problemdescription=problemdescription,
         )
         form.save()
-        return Response({"status": "success", "message": "Form submitted successfully"})
+        return Response(
+            {
+                "status": "success",
+                "message": "Form submitted successfully",
+                "formcode": formcode,  # IMPORTANT: Return the generated formcode
+            }
+        )
     except Exception as e:
         return Response({"status": "error", "message": str(e)}, status=500)
 
@@ -144,22 +200,16 @@ class SendDataView(APIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            # Logic to handle data based on user_type
-            # You can customize this logic as per your requirements
+
             if user_type == "mechanic":
-                # Save data for mechanic
                 pass
             elif user_type == "electric":
-                # Save data for electric
                 pass
             elif user_type == "production":
-                # Save data for production
                 pass
             elif user_type == "utility":
-                # Save data for utility
                 pass
             elif user_type == "tarashkari":
-                # Save data for utility
                 pass
             else:
                 return Response(
@@ -233,3 +283,4 @@ def register_view(request):
             "token": token.key,
         }
     )
+

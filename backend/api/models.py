@@ -27,6 +27,7 @@ class SubmitForm(models.Model):
         null=True
     )  # Changed to DateTimeField for user input
     machinename = models.CharField(max_length=100, null=True)
+    phase = models.CharField(max_length=100, null=True)
     machinecode = models.CharField(max_length=100, null=True)
     machineplacecode = models.CharField(max_length=100, default="MDF1")
     worktype = models.CharField(max_length=20, default="mechanic")

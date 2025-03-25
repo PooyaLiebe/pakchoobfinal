@@ -8,6 +8,7 @@ class AdminSubmitForm(admin.ModelAdmin):
         "id",
         "formcode",
         "problemdate",
+        "phase",
         "productionstop",
         "section",
         "machinename",

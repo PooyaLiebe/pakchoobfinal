@@ -1,18 +1,33 @@
 /* eslint-disable no-unused-vars */
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/SubmitForm.css";
 import { motion } from "framer-motion";
 import Header from "../components/Common/Header";
 import api from "../api.js";
 
+const sectionCodes = {
+  Chipper: "01",
+  "Conveyor Line": "02",
+  "Dryer & Air Grader": "03",
+  Refiner: "04",
+  "Before Press": "05",
+  Press: "06",
+  "After Press": "07",
+  Sanding: "09",
+  "Cooling System": "08",
+  "Steam Boiler": "10",
+  General: "11",
+};
+
 const SubmitForm = () => {
   const [values, setValues] = useState({
     formcode: "",
     problemdate: "",
+    phase: "01",
     productionstop: "خیر",
-    section: "Chipper",
+    section: "01",
     machinename: "",
     machinecode: "",
     machineplacecode: "",
@@ -28,9 +43,9 @@ const SubmitForm = () => {
     operatorname: "",
     problemdescription: "",
   });
-  // const [formcode, setFormcode] = useState("");
-  // const [machinename, setMachineName] = useState("");
+
   const [userType, setUserType] = useState("admin");
+  const [generatedFormCode, setGeneratedFormCode] = useState(""); // new state
 
   const navigate = useNavigate();
 
@@ -42,7 +57,8 @@ const SubmitForm = () => {
         user_type: userType,
       });
       if (response.data.status === "success") {
-        alert("فرم با موفقیت ثبت شد");
+        setGeneratedFormCode(response.data.formcode); // Set the received formcode
+        alert(`فرم با موفقیت ثبت شد. شماره درخواست: ${response.data.formcode}`);
         navigate("/submitform");
       }
     } catch (error) {
@@ -51,6 +67,17 @@ const SubmitForm = () => {
   };
 
   const isStopTimeDisabled = values.productionstop === "خیر";
+  // Generic input change handler
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+
+    setValues((prevValues) => ({
+      ...prevValues,
+      [name]: value,
+    }));
+  };
+
+  // Update form code when phase, section, or problemdate changes
 
   return (
     <div className="flex-1 overflow-auto relative z-10">
@@ -67,7 +94,7 @@ const SubmitForm = () => {
                 <div className="form first">
                   <div className="details personal">
                     <div className="fields">
-                      <div className="input-field">
+                      {/* <div className="input-field">
                         <label
                           htmlFor="formcode"
                           className="flex justify-center text-center"
@@ -79,12 +106,11 @@ const SubmitForm = () => {
                           id="formcode"
                           placeholder="شماره درخواست"
                           className="outline-none text-14 w-full font-normal flex justify-center text-center  items-center rounded-md shadow-lg border-2 p-2 h-11 m-2"
-                          onChange={(e) =>
-                            setValues({ ...values, formcode: e.target.value })
-                          }
+                          value={generatedFormCode} // Display generated formcode
+                          readOnly
                           required
                         />
-                      </div>
+                      </div> */}
                       <div className="input-field">
                         <label
                           htmlFor="problemdate"
@@ -97,14 +123,29 @@ const SubmitForm = () => {
                           name="problemdate"
                           className="outline-none text-12 w-[full] sm:w-full font-normal flex justify-center text-center  items-center rounded-md shadow-lg border-2"
                           id="problemdate"
-                          onChange={(e) =>
-                            setValues({
-                              ...values,
-                              problemdate: e.target.value,
-                            })
-                          }
+                          value={values.problemdate}
+                          onChange={handleInputChange} // Use generic handler
                           required
                         />
+                      </div>
+                      <div className="input-field">
+                        <label
+                          htmlFor="productionstop"
+                          className="flex justify-center items-center"
+                        >
+                          فاز
+                        </label>
+                        <select
+                          name="phase"
+                          className="text-center"
+                          id="phase"
+                          value={values.phase}
+                          onChange={handleInputChange} // Use generic handler
+                          required
+                        >
+                          <option value="01">MDF1</option>
+                          <option value="02">MDF2</option>
+                        </select>
                       </div>
                       <div className="input-field">
                         <label
@@ -117,12 +158,8 @@ const SubmitForm = () => {
                           name="productionstop"
                           className="text-center"
                           id="productionstop"
-                          onChange={(e) =>
-                            setValues({
-                              ...values,
-                              productionstop: e.target.value,
-                            })
-                          }
+                          value={values.productionstop}
+                          onChange={handleInputChange} // Use generic handler
                           required
                         >
                           <option value="خیر">خیر</option>
@@ -140,24 +177,15 @@ const SubmitForm = () => {
                           name="section"
                           id="section"
                           className="text-center"
-                          onChange={(e) =>
-                            setValues({ ...values, section: e.target.value })
-                          }
+                          value={values.section}
+                          onChange={handleInputChange} // Use generic handler
                           required
                         >
-                          <option value="Chipper">Chipper</option>
-                          <option value="Conveyor Line">Conveyor Line</option>
-                          <option value="Dryer & Air Grader">
-                            Dryer & Air Grader
-                          </option>
-                          <option value="Refiner">Refiner</option>
-                          <option value="Before Press">Before Press</option>
-                          <option value="Press">Press</option>
-                          <option value="After Press">After Press</option>
-                          <option value="Sanding">Sanding</option>
-                          <option value="Cooling System">Cooling System</option>
-                          <option value="Steam Boiler">Steam Boiler</option>
-                          <option value="General">General</option>
+                          {Object.keys(sectionCodes).map((sectionName) => (
+                            <option key={sectionName} value={sectionName}>
+                              {sectionName} {/* Displaying section name */}
+                            </option>
+                          ))}
                         </select>
                       </div>
                       <div className="input-field">
@@ -173,12 +201,8 @@ const SubmitForm = () => {
                           placeholder="نام دستگاه را وارد کنید"
                           id="machinename"
                           className="text-center"
-                          onChange={(e) =>
-                            setValues({
-                              ...values,
-                              machinename: e.target.value,
-                            })
-                          }
+                          value={values.machinename}
+                          onChange={handleInputChange} // Use generic handler
                           required
                         />
                       </div>
@@ -195,12 +219,8 @@ const SubmitForm = () => {
                           placeholder="کد دستگاه را وارد کنید"
                           id="machinecode"
                           className="text-center"
-                          onChange={(e) =>
-                            setValues({
-                              ...values,
-                              machinecode: e.target.value,
-                            })
-                          }
+                          value={values.machinecode}
+                          onChange={handleInputChange} // Use generic handler
                           required
                         />
                       </div>
@@ -217,12 +237,8 @@ const SubmitForm = () => {
                           placeholder="کد محل استقرار دستگاه را وارد کنید"
                           id="machineplacecode"
                           className="text-center"
-                          onChange={(e) =>
-                            setValues({
-                              ...values,
-                              machineplacecode: e.target.value,
-                            })
-                          }
+                          value={values.machineplacecode}
+                          onChange={handleInputChange} // Use generic handler
                           required
                         />
                       </div>
@@ -237,9 +253,8 @@ const SubmitForm = () => {
                           name="worktype"
                           className="text-center"
                           id="worktype"
-                          onChange={(e) =>
-                            setValues({ ...values, worktype: e.target.value })
-                          }
+                          value={values.worktype}
+                          onChange={handleInputChange} // Use generic handler
                           required
                         >
                           <option value="mechanic">Mechanic</option>
@@ -261,9 +276,8 @@ const SubmitForm = () => {
                           name="stoptime"
                           id="stoptime"
                           className="outline-none text-14 w-full font-normal flex justify-center text-center items-center rounded-md shadow-lg border-2 p-2 h-11 m-2"
-                          onChange={(e) =>
-                            setValues({ ...values, stoptime: e.target.value })
-                          }
+                          value={values.stoptime}
+                          onChange={handleInputChange} // Use generic handler
                           required
                           disabled={isStopTimeDisabled}
                         />
@@ -281,12 +295,8 @@ const SubmitForm = () => {
                           id="failuretime"
                           className="text-center"
                           placeholder="میزان ساعت کار را وارد کنید"
-                          onChange={(e) =>
-                            setValues({
-                              ...values,
-                              failuretime: e.target.value,
-                            })
-                          }
+                          value={values.failuretime}
+                          onChange={handleInputChange} // Use generic handler
                           required
                         />
                       </div>
@@ -301,9 +311,8 @@ const SubmitForm = () => {
                           name="shift"
                           className="text-center"
                           id="shift"
-                          onChange={(e) =>
-                            setValues({ ...values, shift: e.target.value })
-                          }
+                          value={values.shift}
+                          onChange={handleInputChange} // Use generic handler
                           required
                         >
                           <option value="A">A</option>
@@ -322,12 +331,8 @@ const SubmitForm = () => {
                           name="suggesttime"
                           className="text-center"
                           id="suggesttime"
-                          onChange={(e) =>
-                            setValues({
-                              ...values,
-                              suggesttime: e.target.value,
-                            })
-                          }
+                          value={values.suggesttime}
+                          onChange={handleInputChange} // Use generic handler
                           required
                         >
                           <option value="فوری">فوری</option>
@@ -347,12 +352,8 @@ const SubmitForm = () => {
                           name="worksuggest"
                           className="text-center"
                           id="worksuggest"
-                          onChange={(e) =>
-                            setValues({
-                              ...values,
-                              worksuggest: e.target.value,
-                            })
-                          }
+                          value={values.worksuggest}
+                          onChange={handleInputChange} // Use generic handler
                           required
                         >
                           <option value="اضطراری">اضطراری</option>
@@ -377,9 +378,8 @@ const SubmitForm = () => {
                           name="fixrepair"
                           className="text-center"
                           id="fixrepair"
-                          onChange={(e) =>
-                            setValues({ ...values, fixrepair: e.target.value })
-                          }
+                          value={values.fixrepair}
+                          onChange={handleInputChange} // Use generic handler
                           required
                         >
                           <option value="درخواست اپراتور">
@@ -408,12 +408,8 @@ const SubmitForm = () => {
                           name="reportinspection"
                           className="text-center"
                           id="reportinspection"
-                          onChange={(e) =>
-                            setValues({
-                              ...values,
-                              reportinspection: e.target.value,
-                            })
-                          }
+                          value={values.reportinspection}
+                          onChange={handleInputChange} // Use generic handler
                           required
                         >
                           <option value="بازرسی فنی">بازرسی فنی</option>
@@ -433,9 +429,8 @@ const SubmitForm = () => {
                           name="faultdm"
                           className="text-center"
                           id="faultdm"
-                          onChange={(e) =>
-                            setValues({ ...values, faultdm: e.target.value })
-                          }
+                          value={values.faultdm}
+                          onChange={handleInputChange} // Use generic handler
                           required
                         >
                           <option value="اختلال در کارکرد">
@@ -473,12 +468,8 @@ const SubmitForm = () => {
                           id="operatorname"
                           className="text-center"
                           placeholder="نام اپراتور را وارد کنید"
-                          onChange={(e) =>
-                            setValues({
-                              ...values,
-                              operatorname: e.target.value,
-                            })
-                          }
+                          value={values.operatorname}
+                          onChange={handleInputChange} // Use generic handler
                           required
                         />
                       </div>
@@ -494,12 +485,8 @@ const SubmitForm = () => {
                           id="problemdescription"
                           className="text-center"
                           placeholder="کلیات شرح عیب مشاهده شده را توضیح دهید : "
-                          onChange={(e) =>
-                            setValues({
-                              ...values,
-                              problemdescription: e.target.value,
-                            })
-                          }
+                          value={values.problemdescription}
+                          onChange={handleInputChange} // Use generic handler
                           required
                         />
                       </div>

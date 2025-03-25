@@ -35,7 +35,7 @@ class SubmitForm(models.Model):
     failuretime = models.CharField(max_length=20, null=True)  # Removed auto_now_add
     operatorname = models.CharField(max_length=100, null=True)
     productionstop = models.CharField(max_length=100, null=True)
-    section = models.CharField(max_length=100, null=True)
+    section = models.CharField(max_length=100, null=True,default="01")
     shift = models.CharField(max_length=100, null=True)
     suggesttime = models.CharField(max_length=30, null=True)  # Removed auto_now_add
     worksuggest = models.CharField(max_length=100, null=True)

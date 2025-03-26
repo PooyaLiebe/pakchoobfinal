@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import LoginUser, SubmitForm
+from .models import LoginUser, SubmitForm, TechnicianSubmit, TechnicianPersonel, Aghlam
 
 
 # Register your models here.
@@ -27,6 +27,16 @@ class AdminSubmitForm(admin.ModelAdmin):
     ]
 
 
+class AdminTechnicianForm(admin.ModelAdmin):
+    list_display = [
+        "failurepart",
+        "failuretime",
+        "sparetime",
+        "startfailuretime",
+        "problemdescription",
+    ]
+
+
 class LoginUserAdmin(admin.ModelAdmin):
     list_display = ["id", "username", "password", "user_type"]
     list_editable = ["user_type", "password"]
@@ -34,3 +44,4 @@ class LoginUserAdmin(admin.ModelAdmin):
 
 admin.site.register(LoginUser, LoginUserAdmin)
 admin.site.register(SubmitForm, AdminSubmitForm)
+admin.site.register(TechnicianSubmit, AdminTechnicianForm)

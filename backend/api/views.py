@@ -1,7 +1,7 @@
 import datetime
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import get_object_or_404
 from django.utils.timezone import now
-from django.contrib.auth import authenticate, login, get_user_model
+from django.contrib.auth import authenticate, get_user_model
 from django.http import JsonResponse
 from rest_framework.views import APIView
 from rest_framework import generics, status, permissions
@@ -11,38 +11,43 @@ from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import PermissionDenied
 from django.contrib.auth.hashers import make_password
-from .serializers import SubmitFormSerializer
-from .models import SubmitForm
+from .serializers import (
+    SubmitFormSerializer,
+    TechnicianPersonelSerializer,
+    TechnicianSubmitSerializer,
+    AghlamSerializer,
+)
+from .models import SubmitForm, TechnicianSubmit, TechnicianPersonel, Aghlam
 
-SECTION_CODES= {
+SECTION_CODES = {
     # MDF-2
-  "Chipper": "01",
-  "Conveyor Line": "02",
-  "Dryer & Air Grader": "03",
-  "Refiner": "04",
-  "Before Press": "05",
-  "Press": "06",
-  "After Press": "07",
-  "Sanding": "09",
-  "Cooling System": "08",
-  "Steam Boiler": "10",
-  "General": "11",
-  # MDF-1
-  "Melamine": "01",
-  "High Glass": '05',
-  "Formalin": '08',
-  'Resin': '07',
-  'Purification Plant': '04',
-  'Agheshte': "03"
-};
+    "Chipper": "01",
+    "Conveyor Line": "02",
+    "Dryer & Air Grader": "03",
+    "Refiner": "04",
+    "Before Press": "05",
+    "Press": "06",
+    "After Press": "07",
+    "Sanding": "09",
+    "Cooling System": "08",
+    "Steam Boiler": "10",
+    "General": "11",
+    # MDF-1
+    "Melamine": "01",
+    "High Glass": "05",
+    "Formalin": "08",
+    "Resin": "07",
+    "Purification Plant": "04",
+    "Agheshte": "03",
+}
 
 User = get_user_model()
 
+
 def generate_formcode(phase, section_code, problemdate):
-    """Generate a unique form code based on phase, section code, and date."""
-    date_str = problemdate.strftime("%m")  # Format date as month
-    base_code = f"{phase}{section_code}{date_str}"
-    return base_code
+    date_str = problemdate.strftime("%m") if problemdate else "00"
+    return f"{phase}{section_code}{date_str}"
+
 
 class SubmitFormDetailView(APIView):
     permission_classes = [IsAuthenticated]
@@ -54,52 +59,41 @@ class SubmitFormDetailView(APIView):
             {"form_data": serializer.data, "user_type": request.user.user_type}
         )
 
+
 @api_view(["POST", "GET"])
 @permission_classes([AllowAny])
 def FormListCreate(request):
     # Extract data from the request
-    problemdate = request.data.get("problemdate")
-    phase = request.data.get("phase")
+    problemdate_str = request.data.get("problemdate", "")
+    problemdate = (
+        datetime.datetime.fromisoformat(problemdate_str) if problemdate_str else None
+    )
+    phase = request.data.get("phase", "01")
     machinename = request.data.get("machinename")
     machinecode = request.data.get("machinecode")
-    machineplacecode = request.data.get("machineplacecode")
-    worktype = request.data.get("worktype")
-    stoptime = request.data.get("stoptime")
-    failuretime = request.data.get("failuretime")
+    machineplacecode = request.data.get("machineplacecode", "")
+    worktype = request.data.get("worktype", "")
+    stoptime = request.data.get("stoptime", None) or None
+    failuretime = request.data.get("failuretime", None) or None
     operatorname = request.data.get("operatorname")
-    productionstop = request.data.get("productionstop")
-    section = request.data.get("section")
-    shift = request.data.get("shift")
-    suggesttime = request.data.get("suggesttime")
-    worksuggest = request.data.get("worksuggest")
-    fixrepair = request.data.get("fixrepair")
-    reportinspection = request.data.get("reportinspection")
-    faultdm = request.data.get("faultdm")
-    problemdescription = request.data.get("problemdescription")
+    productionstop = request.data.get("productionstop", False)
+    section = request.data.get("section", "")
+    shift = request.data.get("shift", "")
+    suggesttime = request.data.get("suggesttime", None) or None
+    worksuggest = request.data.get("worksuggest", "")
+    fixrepair = request.data.get("fixrepair", "")
+    reportinspection = request.data.get("reportinspection", "")
+    faultdm = request.data.get("faultdm", "")
+    problemdescription = request.data.get("problemdescription", "")
 
     # Validate required fields
-    if not machinename or not machinecode or not operatorname:
+    if not machinename or not machinecode or not operatorname or not phase:
         return Response(
             {"status": "error", "message": "Required fields are missing"},
             status=400,
         )
 
-    # Parse problemdate and stoptime into datetime (example for validation)
-
-    section_code = SECTION_CODES.get(section)
-    if not section_code:
-        return Response(
-            {"status": "error", "message": "Invalid section name"},
-            status=400,
-        )
-
-    try:
-        problemdate = datetime.datetime.fromisoformat(problemdate) if problemdate else None
-        stoptime = stoptime if stoptime else None
-    except ValueError:
-        return Response(
-            {"status": "error", "message": "Invalid date format"}, status=400
-        )
+    section_code = SECTION_CODES.get(section, "01")
 
     # 1. Generate the initial formcode
     base_formcode = generate_formcode(phase, section_code, problemdate)
@@ -151,6 +145,74 @@ def FormListCreate(request):
         return Response({"status": "error", "message": str(e)}, status=500)
 
 
+# TechnicianSubmit
+@api_view(["POST", "GET"])
+@permission_classes([AllowAny])
+def TechnicianFormSubmit(request):
+    if request.method == "POST":
+        failurepart = request.data.get("failurepart", "")
+        failuretime_str = request.data.get("failuretime", "")
+        failuretime = (
+            datetime.datetime.fromisoformat(failuretime_str)
+            if failuretime_str
+            else None
+        )
+        sparetime_str = request.data.get("sparetime", "")
+        startfailuretime_str = request.data.get("startfailuretime", "")
+        startfailuretime = (
+            datetime.datetime.fromisoformat(startfailuretime_str)
+            if startfailuretime_str
+            else None
+        )
+        problemdescription = request.data.get("problemdescription", "")
+
+        # Convert string timestamps to datetime objects
+        try:
+            failuretime = (
+                datetime.datetime.fromisoformat(failuretime_str)
+                if failuretime_str
+                else None
+            )
+            sparetime = (
+                datetime.datetime.fromisoformat(sparetime_str)
+                if sparetime_str
+                else None
+            )
+            startfailuretime = (
+                datetime.datetime.fromisoformat(startfailuretime_str)
+                if startfailuretime_str
+                else None
+            )
+        except ValueError:
+            return Response(
+                {"status": "error", "message": "Invalid date format"}, status=400
+            )
+
+        if not failurepart or not failuretime or not sparetime:
+            return Response(
+                {"status": "error", "message": "Required fields are missing"},
+                status=400,
+            )
+
+        try:
+            TechnicianSubmit.objects.create(
+                failurepart=failurepart,
+                failuretime=failuretime,
+                sparetime=sparetime,
+                startfailuretime=startfailuretime,
+                problemdescription=problemdescription,
+            )
+            return Response(
+                {"status": "success", "message": "Form submitted successfully"}
+            )
+        except Exception as e:
+            return Response({"status": "error", "message": str(e)}, status=500)
+
+    elif request.method == "GET":
+        submissions = TechnicianSubmit.objects.all().values()
+        return Response({"status": "success", "data": list(submissions)})
+
+
 class SubmitFormListView(APIView):
     permission_classes = [
         AllowAny
@@ -167,19 +229,18 @@ class SubmitFormListView(APIView):
 def delete_form(request, pk):
     try:
         form = SubmitForm.objects.get(pk=pk)
+        form.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
     except SubmitForm.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
-
-    form.delete()
-    return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class IsPm(permissions.BasePermission):
     def has_permission(self, request, view):
-        if not request.user.is_authenticated:
-            return False
-
-        return request.user.group.filter(name="pm").exists()
+        return (
+            request.user.is_authenticated
+            and request.user.groups.filter(name="pm").exists()
+        )
 
 
 class FormDelete(generics.DestroyAPIView):
@@ -199,8 +260,6 @@ class SendDataView(APIView):
                     {"error": "User type is required."},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-
-
             if user_type == "mechanic":
                 pass
             elif user_type == "electric":
@@ -231,13 +290,15 @@ class SendDataView(APIView):
 def login_view(request):
     username = request.data.get("username")
     password = request.data.get("password")
-    user = authenticate(username=username, password=password)
+    user = authenticate(request, username=username, password=password)
 
     if user:
-        token, created = Token.objects.get_or_create(user=user)
+        token, _ = Token.objects.get_or_create(user=user)
         return Response({"token": token.key, "user_type": user.user_type})
     else:
-        return Response({"error": "Invalid credentials"}, status=400)
+        return Response(
+            {"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST
+        )
 
 
 @api_view(["POST"])
@@ -269,12 +330,12 @@ def register_view(request):
         )
 
     user = User(
-        username=username, password=make_password(password), user_type=user_type
+        username=username, user_type=user_type, password=make_password(password)
     )
     user.save()
 
     # Generate a token for the new user
-    token, created = Token.objects.get_or_create(user=user)
+    token, _ = Token.objects.get_or_create(user=user)
 
     return Response(
         {
@@ -283,4 +344,3 @@ def register_view(request):
             "token": token.key,
         }
     )
-

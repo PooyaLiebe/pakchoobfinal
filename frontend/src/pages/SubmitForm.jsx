@@ -32,7 +32,7 @@ const SubmitForm = () => {
   const [values, setValues] = useState({
     formcode: "",
     problemdate: "",
-    phase: "01",
+    phase: "",
     productionstop: "خیر",
     section: "01",
     machinename: "",
@@ -53,23 +53,56 @@ const SubmitForm = () => {
 
   const [userType, setUserType] = useState("admin");
   const [generatedFormCode, setGeneratedFormCode] = useState(""); // new state
+  const [errorMessage, setErrorMessage] = useState("");
 
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!values.machinename || !values.machinecode || !values.operatorname) {
+      setErrorMessage("فیلد های ضرروری را پر کنید");
+      return;
+    }
+
     try {
-      const response = await api.post("/api/submitform/", values, {
+      const response = await api.post("/api/submitform/", {
+        ...values,
         user_type: userType,
       });
       if (response.data.status === "success") {
         setGeneratedFormCode(response.data.formcode); // Set the received formcode
-        alert(`فرم با موفقیت ثبت شد. شماره درخواست: ${response.data.formcode}`);
+        setValues({
+          formcode: "",
+          problemdate: "",
+          phase: "01",
+          productionstop: "خیر",
+          section: "01",
+          machinename: "",
+          machinecode: "",
+          machineplacecode: "",
+          worktype: "mechanic",
+          stoptime: "",
+          failuretime: "",
+          shift: "A",
+          suggesttime: "فوری",
+          worksuggest: "اضطراری",
+          fixrepair: "درخواست اپراتو",
+          reportinspection: "بازرسی فنی",
+          faultdm: "اختلال در کارکرد",
+          operatorname: "",
+          problemdescription: "",
+        });
+        setTimeout(() => {
+          setGeneratedFormCode("");
+        }, 3000);
         navigate("/submitform");
+      } else {
+        setErrorMessage("خطا در ارسال فرم لطفا دوباره امتحان کنید");
+        console.error("حطا در ارسال فرم", response.data.message);
       }
     } catch (error) {
-      console.error(error);
+      console.error("خطا در ارسال فرم", error);
     }
   };
 
@@ -86,7 +119,7 @@ const SubmitForm = () => {
       setValues((prevValues) => ({
         ...prevValues,
         phase: savedPhase,
-        section: savedPhase === "01" ? "Chipper" : "Melamine", // Default section based on phase
+        section: savedPhase === "01" ? "Melamine" : "Chipper",
       }));
     }
   }, []);
@@ -97,7 +130,10 @@ const SubmitForm = () => {
       const newValues = { ...prevValues, [name]: value };
       if (name === "phase") {
         localStorage.setItem("phase", value);
-        newValues.section = value === "01" ? "Chipper" : "Melamine"; // Default section based on phase
+        const updatedSection = Object.keys(
+          value === "01" ? sectionCodes : sectionCodes2
+        )[0];
+        newValues.section = updatedSection;
       }
       return newValues;
     });
@@ -115,6 +151,11 @@ const SubmitForm = () => {
           <div className="body dark:bg-secondary-dark-bg rounded-3xl z-10">
             <div className="container">
               <form onSubmit={handleSubmit}>
+                {generatedFormCode && (
+                  <div>
+                    <h3>کد فرم شما : {generatedFormCode}</h3>
+                  </div>
+                )}
                 <div className="form first">
                   <div className="details personal">
                     <div className="fields">

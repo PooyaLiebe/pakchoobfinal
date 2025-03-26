@@ -22,6 +22,7 @@ import TarashKariForm from "./pages/TarashKariForm";
 import MetalWorkingForm from "./pages/MetalWorkingForm";
 import TarashKariDashboard from "./pages/TarashKariDashboard";
 import MetalWorking from "./pages/MetalWorking";
+import TechnicianSubmit from "./pages/TechnicianSubmit";
 
 function Logout() {
   localStorage.clear();
@@ -115,6 +116,7 @@ function App() {
           <Route path="/utilityform" element={<UtilityForm />} />
           <Route path="/tarashkariform" element={<TarashKariForm />} />
           <Route path="/metalworkingform" element={<MetalWorkingForm />} />
+          <Route path="/techniciansubmit" element={<TechnicianSubmit />} />
         </Routes>
       </div>
     </div>

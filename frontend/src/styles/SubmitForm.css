@@ -12,6 +12,7 @@
   width: 100%;
   margin: 0 15px;
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+  background-color: #1e2939;
 }
 .container header {
   position: relative;
@@ -84,7 +85,7 @@ textarea:is(:focus, :valid) {
   color: #707070;
 }
 
-.container form button {
+.container form .nextBtn {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -100,10 +101,29 @@ textarea:is(:focus, :valid) {
   transition: all 0.3s linear;
   cursor: pointer;
 }
-form button:hover {
+
+.nextBtnCancel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 45px;
+  max-width: 200px;
+  width: 100%;
+  border: none;
+  outline: none;
+  color: #fff;
+  border-radius: 5px;
+  margin: 25px;
+  background-color: red;
+  transition: all 0.3s linear;
+  cursor: pointer;
+  list-style: none;
+  list-style-type: none;
+}
+form .nextBtn:hover {
   background-color: #265df2;
 }
-form button .next-icon {
+form .nextBtn .next-icon {
   margin: 0 6px;
 }
 

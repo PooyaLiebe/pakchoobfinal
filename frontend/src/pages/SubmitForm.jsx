@@ -159,23 +159,6 @@ const SubmitForm = () => {
                 <div className="form first">
                   <div className="details personal">
                     <div className="fields">
-                      {/* <div className="input-field">
-                        <label
-                          htmlFor="formcode"
-                          className="flex justify-center text-center"
-                        >
-                          شماره درخواست
-                        </label>
-                        <input
-                          type="text"
-                          id="formcode"
-                          placeholder="شماره درخواست"
-                          className="outline-none text-14 w-full font-normal flex justify-center text-center  items-center rounded-md shadow-lg border-2 p-2 h-11 m-2"
-                          value={generatedFormCode} // Display generated formcode
-                          readOnly
-                          required
-                        />
-                      </div> */}
                       <div className="input-field">
                         <label
                           htmlFor="problemdate"

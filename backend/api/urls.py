@@ -2,13 +2,14 @@ from django.urls import path
 from .views import (
     login_view,
     register_view,
-    FormListCreate,  # FBV (works without .as_view())
+    FormListCreate,
     FormDelete,
     SubmitFormListView,
     SendDataView,
     TechnicianFormSubmit,
-    SubmitFormDetailView,  # Correctly imported view
+    SubmitFormDetailView,
     SubmitFormDetailByCodeView,
+    AghlamSubmit,
 )
 
 urlpatterns = [
@@ -31,4 +32,6 @@ urlpatterns = [
     ),
     # Technician Submit Endpoints
     path("api/techniciansubmit/", TechnicianFormSubmit, name="techniciansubmit"),
+    # Aghlam Submit EndPoints
+    path("api/aghlams/", AghlamSubmit, name="aghlams"),
 ]

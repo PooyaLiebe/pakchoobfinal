@@ -38,11 +38,25 @@ class AdminTechnicianForm(admin.ModelAdmin):
     ]
 
 
+class AdminAghlam(admin.ModelAdmin):
+    list_display = [
+        "formcode",
+        "kalaname",
+        "countkala",
+        "vahedkala",
+        "codekala",
+        "flamekala",
+        "shopkala",
+        "submit_form",
+    ]
+
+
 class LoginUserAdmin(admin.ModelAdmin):
     list_display = ["id", "username", "password", "user_type"]
     list_editable = ["user_type", "password"]
 
 
 admin.site.register(LoginUser, LoginUserAdmin)
+admin.site.register(Aghlam, AdminAghlam)
 admin.site.register(SubmitForm, AdminSubmitForm)
 admin.site.register(TechnicianSubmit, AdminTechnicianForm)

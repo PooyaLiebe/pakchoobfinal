@@ -58,16 +58,29 @@ class TechnicianSubmit(models.Model):
     def __str__(self):
         return f"Technician Submit {self.formcode}"
 
+
 class Aghlam(models.Model):
+    formcode = models.CharField(max_length=100, null=True)
     kalaname = models.CharField(max_length=50)
     countkala = models.CharField(max_length=50)
     vahedkala = models.CharField(max_length=50)
     codekala = models.CharField(max_length=50)
     flamekala = models.CharField(max_length=50)
     shopkala = models.CharField(max_length=50)
+    submit_form = models.ForeignKey(
+        SubmitForm,
+        on_delete=models.CASCADE,
+        related_name="aghlams",
+        null=True,
+        blank=True,
+    )
+
+    def __str__(self):
+        return f"Aghlam Submit {self.formcode}"
 
 
 class TechnicianPersonel(models.Model):
+    formcode = models.CharField(max_length=100, null=True)
     personel = models.CharField(max_length=50)
     personelnumber = models.CharField(max_length=50)
     datesubmit = models.DateTimeField(null=True)
@@ -81,3 +94,6 @@ class TechnicianPersonel(models.Model):
     failurereason = models.CharField(max_length=50)
     failurereasondescription = models.CharField(max_length=50)
     suggestionfailure = models.CharField(max_length=50)
+
+    def __str__(self):
+        return f"Personel Submit {self.formcode}"

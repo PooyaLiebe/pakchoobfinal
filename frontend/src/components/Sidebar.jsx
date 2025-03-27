@@ -1,7 +1,14 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { BarChart2, FormInput, Menu, Power } from "lucide-react";
+import {
+  BarChart2,
+  FormInput,
+  Menu,
+  Power,
+  BookOpenCheck,
+  ClipboardList,
+} from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Tooltip } from "@mui/material";
 
@@ -33,33 +40,33 @@ const Sidebar = () => {
         },
         {
           name: "Submit Form",
-          icon: FormInput,
-          color: "#6366f1",
+          icon: BookOpenCheck,
+          color: "#EC4899",
           href: "/submitform",
         },
+
         {
-          name: "Technician Submit",
-          icon: FormInput,
-          color: "#6366f1",
-          href: "/techniciansubmit",
+          name: "Forms",
+          icon: ClipboardList,
+          color: "#10B981",
+          href: "/forms",
         },
-        { name: "Forms", icon: FormInput, color: "#6366f1", href: "/forms" },
         {
           name: "PM Submit",
-          icon: FormInput,
-          color: "#6366f1",
+          icon: BookOpenCheck,
+          color: "#F59E0B",
           href: "/pmsubmit",
         },
         {
           name: "PM Forms",
-          icon: FormInput,
-          color: "#6366f1",
+          icon: ClipboardList,
+          color: "#3b82f6",
           href: "/pmforms",
         },
         {
           name: "Logout",
           icon: Power,
-          color: "#6366f1",
+          color: "#6ee7b7",
           href: "/logout",
         },
       ]);

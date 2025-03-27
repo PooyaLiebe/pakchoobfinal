@@ -120,6 +120,7 @@ function App() {
             path="/techniciansubmit/:formcode"
             element={<TechnicianSubmit />}
           />
+          <Route path="/techniciansubmit/" element={<TechnicianSubmit />} />
         </Routes>
       </div>
     </div>

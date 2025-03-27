@@ -24,12 +24,16 @@ class TechnicianSubmitSerializer(serializers.ModelSerializer):
 
 
 class TechnicianPersonelSerializer(serializers.ModelSerializer):
+    submit_form = SubmitFormSerializer(read_only=True)
+
     class Meta:
         model = TechnicianPersonel
         fields = "__all__"
 
 
 class AghlamSerializer(serializers.ModelSerializer):
+    submit_form = SubmitFormSerializer(read_only=True)
+
     class Meta:
         model = Aghlam
         fields = "__all__"

@@ -222,7 +222,7 @@ def TechnicianFormSubmit(request):
         # Create and save form entry
         try:
             TechnicianSubmit.objects.create(
-                formcode = formcode,
+                formcode=formcode,
                 failurepart=failurepart,
                 failuretime=failuretime,
                 sparetime=sparetime,
@@ -237,6 +237,50 @@ def TechnicianFormSubmit(request):
 
     elif request.method == "GET":
         submissions = TechnicianSubmit.objects.all().values()
+        return Response({"status": "success", "data": list(submissions)})
+
+
+@api_view(["POST", "GET"])
+@permission_classes([AllowAny])
+def AghlamSubmit(request):
+    if request.method == "POST":
+        # Extract data
+        formcode = request.data.get("formcode")
+        kalaname = request.data.get("kalaname")
+        countkala = request.data.get("countkala")
+        vahedkala = request.data.get("vahedkala")
+        codekala = request.data.get("codekala")
+        flamekala = request.data.get("flamekala")
+        shopkala = request.data.get("shopkala")
+
+        # Validate required fields
+        if not kalaname or not countkala or not vahedkala:
+            return Response(
+                {"status": "error", "message": "Required fields are missing"},
+                status=400,
+            )
+
+        # Create and save form entry
+        try:
+            Aghlam.objects.create(
+                formcode=formcode,
+                kalaname=kalaname,
+                countkala=countkala,
+                vahedkala=vahedkala,
+                codekala=codekala,
+                flamekala=flamekala,
+                shopkala=shopkala,
+            )
+            return Response(
+                {"status": "success", "message": "Form submitted successfully"}
+            )
+        except Exception as e:
+            # Log the error and return it in the response
+            print(f"Error saving Aghlam: {e}")
+            return Response({"status": "error", "message": str(e)}, status=500)
+
+    elif request.method == "GET":
+        submissions = Aghlam.objects.all().values()
         return Response({"status": "success", "data": list(submissions)})
 
 

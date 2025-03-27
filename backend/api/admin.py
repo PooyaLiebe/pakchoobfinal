@@ -29,6 +29,7 @@ class AdminSubmitForm(admin.ModelAdmin):
 
 class AdminTechnicianForm(admin.ModelAdmin):
     list_display = [
+        "formcode",
         "failurepart",
         "failuretime",
         "sparetime",

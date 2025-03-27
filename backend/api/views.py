@@ -1,16 +1,15 @@
 import datetime
 from django.shortcuts import get_object_or_404
-from django.utils.timezone import now
+from django.utils.timezone import make_aware
 from django.contrib.auth import authenticate, get_user_model
-from django.http import JsonResponse
+from django.contrib.auth.hashers import make_password
 from rest_framework.views import APIView
 from rest_framework import generics, status, permissions
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
-from rest_framework.exceptions import PermissionDenied
-from django.contrib.auth.hashers import make_password
+from rest_framework.authentication import TokenAuthentication
 from .serializers import (
     SubmitFormSerializer,
     TechnicianPersonelSerializer,
@@ -49,8 +48,21 @@ def generate_formcode(phase, section_code, problemdate):
     return f"{phase}{section_code}{date_str}"
 
 
+class SubmitFormDetailByCodeView(APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
+
+    def get(self, request, formcode):
+        submit_form = get_object_or_404(SubmitForm, formcode=formcode)
+        serializer = SubmitFormSerializer(submit_form)
+        return Response(
+            {"form_data": serializer.data, "user_type": request.user.user_type}
+        )
+
+
 class SubmitFormDetailView(APIView):
     permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
 
     def get(self, request, pk):
         submit_form = get_object_or_404(SubmitForm, pk=pk)
@@ -63,54 +75,67 @@ class SubmitFormDetailView(APIView):
 @api_view(["POST", "GET"])
 @permission_classes([AllowAny])
 def FormListCreate(request):
-    # Extract data from the request
+    # Extract data from request
     problemdate_str = request.data.get("problemdate", "")
     problemdate = (
-        datetime.datetime.fromisoformat(problemdate_str) if problemdate_str else None
+        make_aware(datetime.datetime.fromisoformat(problemdate_str))
+        if problemdate_str
+        else None
     )
+
     phase = request.data.get("phase", "01")
     machinename = request.data.get("machinename")
     machinecode = request.data.get("machinecode")
     machineplacecode = request.data.get("machineplacecode", "")
     worktype = request.data.get("worktype", "")
-    stoptime = request.data.get("stoptime", None) or None
-    failuretime = request.data.get("failuretime", None) or None
+    stoptime_str = request.data.get("stoptime", None)
+    failuretime = request.data.get("failuretime", None)
     operatorname = request.data.get("operatorname")
     productionstop = request.data.get("productionstop", False)
     section = request.data.get("section", "")
     shift = request.data.get("shift", "")
-    suggesttime = request.data.get("suggesttime", None) or None
+    suggesttime = request.data.get("suggesttime", None)
     worksuggest = request.data.get("worksuggest", "")
     fixrepair = request.data.get("fixrepair", "")
     reportinspection = request.data.get("reportinspection", "")
     faultdm = request.data.get("faultdm", "")
     problemdescription = request.data.get("problemdescription", "")
 
+    # Convert timestamps
+    stoptime = (
+        make_aware(datetime.datetime.fromisoformat(stoptime_str))
+        if stoptime_str
+        else None
+    )
     # Validate required fields
     if not machinename or not machinecode or not operatorname or not phase:
         return Response(
-            {"status": "error", "message": "Required fields are missing"},
-            status=400,
+            {"status": "error", "message": "Required fields are missing"}, status=400
         )
 
     section_code = SECTION_CODES.get(section, "01")
 
-    # 1. Generate the initial formcode
+    # Generate formcode efficiently
     base_formcode = generate_formcode(phase, section_code, problemdate)
-    formcode = base_formcode + "01"  # Start with 01
+    last_form = (
+        SubmitForm.objects.filter(formcode__startswith=base_formcode)
+        .order_by("-formcode")
+        .first()
+    )
 
-    # 2. Check for existing formcode and increment
-    while SubmitForm.objects.filter(formcode=formcode).exists():
-        last_two = int(formcode[-2:])
-        new_last_two = str(last_two + 1).zfill(2)
-        if last_two >= 99:
+    if last_form:
+        last_number = int(last_form.formcode[-2:])
+        new_last_two = str(last_number + 1).zfill(2)
+        if last_number >= 99:
             return Response(
-                {"status": "error", "message": "Reached maximum form code number"},
+                {"status": "error", "message": "Reached maximum formcode limit"},
                 status=400,
-            )  # or modify the base_formcode
-        formcode = formcode[:-2] + new_last_two
+            )
+        formcode = base_formcode + new_last_two
+    else:
+        formcode = base_formcode + "01"
 
-    # Save form submission to the database
+    # Save to database
     try:
         form = SubmitForm.objects.create(
             formcode=formcode,
@@ -133,12 +158,11 @@ def FormListCreate(request):
             faultdm=faultdm,
             problemdescription=problemdescription,
         )
-        form.save()
         return Response(
             {
                 "status": "success",
                 "message": "Form submitted successfully",
-                "formcode": formcode,  # IMPORTANT: Return the generated formcode
+                "formcode": formcode,
             }
         )
     except Exception as e:
@@ -150,52 +174,55 @@ def FormListCreate(request):
 @permission_classes([AllowAny])
 def TechnicianFormSubmit(request):
     if request.method == "POST":
+        # Extract data
+        formcode = request.data.get("formcode")
         failurepart = request.data.get("failurepart", "")
         failuretime_str = request.data.get("failuretime", "")
-        failuretime = (
-            datetime.datetime.fromisoformat(failuretime_str)
-            if failuretime_str
-            else None
-        )
         sparetime_str = request.data.get("sparetime", "")
         startfailuretime_str = request.data.get("startfailuretime", "")
-        startfailuretime = (
-            datetime.datetime.fromisoformat(startfailuretime_str)
-            if startfailuretime_str
-            else None
-        )
         problemdescription = request.data.get("problemdescription", "")
 
-        # Convert string timestamps to datetime objects
-        try:
-            failuretime = (
-                datetime.datetime.fromisoformat(failuretime_str)
-                if failuretime_str
-                else None
-            )
-            sparetime = (
-                datetime.datetime.fromisoformat(sparetime_str)
-                if sparetime_str
-                else None
-            )
-            startfailuretime = (
-                datetime.datetime.fromisoformat(startfailuretime_str)
-                if startfailuretime_str
-                else None
-            )
-        except ValueError:
-            return Response(
-                {"status": "error", "message": "Invalid date format"}, status=400
-            )
+        # Convert timestamps to timezone-aware datetime objects
+        def parse_datetime(dt_str):
+            try:
+                return (
+                    make_aware(datetime.datetime.fromisoformat(dt_str))
+                    if dt_str
+                    else None
+                )
+            except ValueError:
+                return None  # Invalid date format
 
+        failuretime = parse_datetime(failuretime_str)
+        sparetime = parse_datetime(sparetime_str)
+        startfailuretime = parse_datetime(startfailuretime_str)
+
+        # Validate required fields
         if not failurepart or not failuretime or not sparetime:
             return Response(
                 {"status": "error", "message": "Required fields are missing"},
                 status=400,
             )
 
+        # Check for invalid date formats
+        if failuretime_str and not failuretime:
+            return Response(
+                {"status": "error", "message": "Invalid failuretime format"}, status=400
+            )
+        if sparetime_str and not sparetime:
+            return Response(
+                {"status": "error", "message": "Invalid sparetime format"}, status=400
+            )
+        if startfailuretime_str and not startfailuretime:
+            return Response(
+                {"status": "error", "message": "Invalid startfailuretime format"},
+                status=400,
+            )
+
+        # Create and save form entry
         try:
             TechnicianSubmit.objects.create(
+                formcode = formcode,
                 failurepart=failurepart,
                 failuretime=failuretime,
                 sparetime=sparetime,

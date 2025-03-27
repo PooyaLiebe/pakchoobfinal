@@ -49,12 +49,14 @@ class SubmitForm(models.Model):
 
 
 class TechnicianSubmit(models.Model):
+    formcode = models.CharField(max_length=100, null=True)
     failurepart = models.CharField(max_length=50)
     failuretime = models.DateTimeField(null=True)
     sparetime = models.DateTimeField(null=True)
     startfailuretime = models.DateTimeField(null=True)
     problemdescription = models.TextField(blank=True, null=True)
-
+    def __str__(self):
+        return f"Technician Submit {self.formcode}"
 
 class Aghlam(models.Model):
     kalaname = models.CharField(max_length=50)

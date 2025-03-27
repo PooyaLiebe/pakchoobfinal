@@ -2,11 +2,13 @@ from django.urls import path
 from .views import (
     login_view,
     register_view,
-    FormListCreate,
+    FormListCreate,  # FBV (works without .as_view())
     FormDelete,
     SubmitFormListView,
     SendDataView,
     TechnicianFormSubmit,
+    SubmitFormDetailView,  # Correctly imported view
+    SubmitFormDetailByCodeView,
 )
 
 urlpatterns = [
@@ -14,10 +16,19 @@ urlpatterns = [
     path("api/register/", register_view, name="register"),
     # Generic Form Submission
     path("api/forms/send", SendDataView.as_view(), name="send_data"),
-    path("api/submitform/", FormListCreate, name="submitform"),  # Function-based view
+    path("api/submitform/", FormListCreate, name="submitform"),  # FBV (no .as_view())
     path("api/submitform/list/", SubmitFormListView.as_view(), name="submitform-list"),
     path("api/submitform/delete/<int:pk>/", FormDelete.as_view(), name="delete_form"),
-    
+    path(
+        "api/submitform/<str:formcode>/",
+        SubmitFormDetailByCodeView.as_view(),
+        name="submitform-detail-by-code",
+    ),
+    path(
+        "api/submitform/detail/<int:pk>/",
+        SubmitFormDetailView.as_view(),
+        name="submitform-detail",
+    ),
     # Technician Submit Endpoints
-    path("api/techniciansubmit/", TechnicianFormSubmit, name="technician_submit"),
+    path("api/techniciansubmit/", TechnicianFormSubmit, name="techniciansubmit"),
 ]

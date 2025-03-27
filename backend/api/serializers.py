@@ -3,6 +3,12 @@ from rest_framework import serializers
 from .models import SubmitForm, TechnicianSubmit, TechnicianPersonel, Aghlam
 
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["id", "username", "email", "user_type"]  # Adjust as needed
+
+
 class SubmitFormSerializer(serializers.ModelSerializer):
     class Meta:
         model = SubmitForm
@@ -10,6 +16,8 @@ class SubmitFormSerializer(serializers.ModelSerializer):
 
 
 class TechnicianSubmitSerializer(serializers.ModelSerializer):
+    submit_form = SubmitFormSerializer(read_only=True)
+
     class Meta:
         model = TechnicianSubmit
         fields = "__all__"

@@ -28,6 +28,7 @@ const FormTable = () => {
     return true; // If no match, show all
   });
 
+  
   const getForm = async () => {
     try {
       const res = await api.get("/api/submitform/list/");
@@ -244,7 +245,7 @@ const FormTable = () => {
                     </button>
                   </Tooltip>
                   <Tooltip title={"Send"} placement="top">
-                    <Link to={"/techniciansubmit"}>
+                    <Link to={`/techniciansubmit/${form.formcode}`}>
                       <button className="text-pink-500 hover:text-pink-300 cursor-pointer">
                         <Send size={18} />
                       </button>

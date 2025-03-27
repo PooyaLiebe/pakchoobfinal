@@ -116,7 +116,10 @@ function App() {
           <Route path="/utilityform" element={<UtilityForm />} />
           <Route path="/tarashkariform" element={<TarashKariForm />} />
           <Route path="/metalworkingform" element={<MetalWorkingForm />} />
-          <Route path="/techniciansubmit" element={<TechnicianSubmit />} />
+          <Route
+            path="/techniciansubmit/:formcode"
+            element={<TechnicianSubmit />}
+          />
         </Routes>
       </div>
     </div>

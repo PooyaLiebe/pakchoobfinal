@@ -1,17 +1,19 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../styles/SubmitForm.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import api from "../api";
 
 function TechnicianSubmit() {
   const [values, setValues] = useState({
+    formcode: "",
     failurepart: "Pinion",
     failuretime: "",
     sparetime: "",
     startfailuretime: "",
     problemdescription: "",
   });
+  const { formcode } = useParams();
   const [show, setShow] = useState(false);
   const [userType, setUserType] = useState("admin");
   const [showPermit, setShowPermit] = useState(false);
@@ -47,10 +49,36 @@ function TechnicianSubmit() {
     return datetime ? `${datetime}:00` : "";
   };
 
+  useEffect(() => {
+    const fetchFormData = async () => {
+      try {
+        const token = localStorage.getItem("user_token");
+
+        if (!token) {
+          console.error("Token is missing!");
+          return;
+        }
+
+        const res = await api.get(`/api/submitform/${formcode}/`, {
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        });
+        setValues(res.data);
+      } catch (error) {
+        console.error("Error Fetching form data", error);
+      }
+    };
+
+    if (formcode) fetchFormData(); // Only fetch if formcode is defined
+  }, [formcode]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await api.post("/api/techniciansubmit/", {
+        // values,
+        formcode: values?.formcode || formcode,
         failurepart: values.failurepart,
         failuretime: formatDateTime(values.failuretime),
         sparetime: formatDateTime(values.sparetime),
@@ -60,8 +88,8 @@ function TechnicianSubmit() {
 
       if (response.data.status === "success") {
         setGeneratedFormCode(response.data.failurepart);
-        // alert("✅ فرم ثبت شد");
         setValues({
+          formcode: formcode,
           failurepart: "Pinion",
           failuretime: "",
           sparetime: "",
@@ -77,6 +105,14 @@ function TechnicianSubmit() {
     } catch (error) {
       console.error("❌ خطا در ثبت فرم:", error);
     }
+  };
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setValues((prevValues) => ({
+      ...prevValues,
+      [name]: value,
+    }));
   };
   const handleAghlamSubmit = (e) => {
     e.preventDefault();
@@ -128,11 +164,17 @@ function TechnicianSubmit() {
   const handleClosePermit = () => {
     setShowPermit(false);
   };
-  const handleCloseAghlam = () => {
-    setShowAghlam(false);
-  };
-  const handleCloseTech = () => {
-    setShowTech(false);
+  const handleModalClose = (modalType) => {
+    switch (modalType) {
+      case "aghlam":
+        setShowAghlam(false);
+        break;
+      case "tech":
+        setShowTech(false);
+        break;
+      default:
+        break;
+    }
   };
   return (
     <div className="body dark:bg-secondary-dark-bg rounded-3xl">
@@ -142,6 +184,23 @@ function TechnicianSubmit() {
           <div className="form first">
             <div className="details personal">
               <div className="fields">
+                <div className="input-field">
+                  <label
+                    htmlFor="formcode"
+                    className="flex justify-center text-center"
+                  >
+                    شماره درخواست
+                  </label>
+                  <input
+                    type="text"
+                    id="formcode"
+                    placeholder="شماره درخواست"
+                    className="outline-none text-14 w-full font-normal flex justify-center text-center  items-center rounded-md shadow-lg border-2 p-2 h-11 m-2"
+                    value={values?.formcode || formcode} // Pre-fill with formcode from URL
+                    disabled
+                    required
+                  />
+                </div>
                 <div className="input-field">
                   <label
                     htmlFor="failurepart"
@@ -155,9 +214,7 @@ function TechnicianSubmit() {
                     id="failurepart"
                     placeholder="نام قسمت معیوب(بر اساس تکسونومی)"
                     className="outline-none text-14 w-full font-normal flex justify-center text-center  items-center rounded-md shadow-lg border-2 "
-                    onChange={(e) =>
-                      setValues({ ...values, failurepart: e.target.value })
-                    }
+                    onChange={handleInputChange}
                     required
                   />
                 </div>
@@ -173,9 +230,7 @@ function TechnicianSubmit() {
                     name="failuretime"
                     className="outline-none text-14 w-full font-normal flex justify-center text-center  items-center rounded-md shadow-lg border-2 p-2 h-11"
                     id="failuretime"
-                    onChange={(e) => {
-                      setValues({ ...values, failuretime: e.target.value });
-                    }}
+                    onChange={handleInputChange}
                     required
                   />
                 </div>
@@ -191,9 +246,7 @@ function TechnicianSubmit() {
                     name="sparetime"
                     id="sparetime"
                     className="outline-none text-14 w-full font-normal flex justify-center text-center  items-center rounded-md shadow-lg border-2 p-2 h-11"
-                    onChange={(e) => {
-                      setValues({ ...values, sparetime: e.target.value });
-                    }}
+                    onChange={handleInputChange}
                     required
                   />
                 </div>
@@ -209,12 +262,7 @@ function TechnicianSubmit() {
                     name="startfailuretime"
                     id="startfailuretime"
                     className="outline-none text-14 w-full font-normal flex justify-center text-center  items-center rounded-md shadow-lg border-2 h-11 "
-                    onChange={(e) => {
-                      setValues({
-                        ...values,
-                        startfailuretime: e.target.value,
-                      });
-                    }}
+                    onChange={handleInputChange}
                     required
                   />
                 </div>
@@ -230,12 +278,7 @@ function TechnicianSubmit() {
                     id="problemdescription"
                     className="outline-none text-14 w-full font-normal flex justify-center text-center  items-center rounded-md shadow-lg border-2 p-2 h-11 m-2"
                     placeholder="کلیات شرح عیب مشاهده شده را توضیح دهید : "
-                    onChange={(e) =>
-                      setValues({
-                        ...values,
-                        problemdescription: e.target.value,
-                      })
-                    }
+                    onChange={handleInputChange}
                     required
                   />
                 </div>
@@ -244,14 +287,14 @@ function TechnicianSubmit() {
                 <button
                   type="button"
                   className="nextBtn"
-                  onClick={() => setShowAghlam(true)}
+                  onClick={handleModalClose}
                 >
                   اقلام
                 </button>
                 <button
                   type="button"
                   className="nextBtn"
-                  onClick={() => setShowTech(true)}
+                  onClick={handleModalClose}
                 >
                   تکنیسین
                 </button>
@@ -419,7 +462,7 @@ function TechnicianSubmit() {
                           </div>
                           <div className="flex">
                             <button onClick={handleAghlamSubmit}>تایید</button>
-                            <button onClick={handleCloseAghlam}>خروج</button>
+                            <button onClick={handleModalClose}>خروج</button>
                           </div>
                         </div>
                       </div>
@@ -781,7 +824,7 @@ function TechnicianSubmit() {
                           </div>
                           <div className="flex">
                             <button onClick={handleTechSubmit}>تایید</button>
-                            <button onClick={handleCloseTech}>خروج</button>
+                            <button onClick={handleModalClose}>خروج</button>
                           </div>
                         </div>
                       </div>

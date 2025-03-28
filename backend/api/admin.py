@@ -51,6 +51,26 @@ class AdminAghlam(admin.ModelAdmin):
     ]
 
 
+class AdminPersonel(admin.ModelAdmin):
+    list_display = [
+        "formcode",
+        "personel",
+        "personelnumber",
+        "datesubmit",
+        "specialjob",
+        "starttimerepair",
+        "endtimerepair",
+        "repairstatus",
+        "unitrepair",
+        "shift",
+        "delayreason",
+        "failurereason",
+        "failurereasondescription",
+        "suggestionfailure",
+        "submit_form",
+    ]
+
+
 class LoginUserAdmin(admin.ModelAdmin):
     list_display = ["id", "username", "password", "user_type"]
     list_editable = ["user_type", "password"]
@@ -60,3 +80,4 @@ admin.site.register(LoginUser, LoginUserAdmin)
 admin.site.register(Aghlam, AdminAghlam)
 admin.site.register(SubmitForm, AdminSubmitForm)
 admin.site.register(TechnicianSubmit, AdminTechnicianForm)
+admin.site.register(TechnicianPersonel, AdminPersonel)

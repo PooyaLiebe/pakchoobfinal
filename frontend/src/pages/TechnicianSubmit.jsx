@@ -9,7 +9,7 @@ import api from "../api";
 function TechnicianSubmit() {
   const [values, setValues] = useState({
     formcode: "",
-    failurepart: "Pinion",
+    failurepart: "",
     failuretime: "",
     sparetime: "",
     startfailuretime: "",
@@ -36,7 +36,7 @@ function TechnicianSubmit() {
     personel: "",
     personelnumber: "",
     datesubmit: "",
-    specialjob: "رئیس",
+    specialjob: "کارشناس",
     starttimerepair: "",
     endtimerepair: "",
     repairstatus: "تعمیر کامل و قابل کاربری است",
@@ -79,9 +79,16 @@ function TechnicianSubmit() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (
+      !values.failurepart ||
+      !values.failuretime ||
+      !values.problemdescription
+    ) {
+      alert("لطفا همه فیلدهای مورد نیاز را پر کنید");
+      return;
+    }
     try {
       const response = await api.post("/api/techniciansubmit/", {
-        // values,
         formcode: values?.formcode || formcode,
         failurepart: values.failurepart,
         failuretime: formatDateTime(values.failuretime),
@@ -94,15 +101,15 @@ function TechnicianSubmit() {
         setGeneratedFormCode(response.data.formcode);
         alert("فرم ثبت شد");
         setValues({
-          formcode: formcode,
-          failurepart: "Pinion",
+          formcode: "",
+          failurepart: "",
           failuretime: "",
           sparetime: "",
           startfailuretime: "",
           problemdescription: "",
         });
         setTimeout(() => {
-          setGeneratedFormCode("");
+          setGeneratedFormCode(""); // Clears form code after 3 seconds
         }, 3000);
       } else {
         console.error("⚠️ خطا در ثبت فرم:", response.data.message);
@@ -114,6 +121,11 @@ function TechnicianSubmit() {
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
+
+    setTech((prevTech) => ({
+      ...prevTech,
+      [name]: value,
+    }));
 
     if (
       [
@@ -139,7 +151,7 @@ function TechnicianSubmit() {
 
   const handleAghlamSubmit = async (e) => {
     e.preventDefault();
-    if (!aghlam.kalaname || !aghlam.countkala || !aghlam.codekala) {
+    if (!aghlam.kalaname || !aghlam.countkala) {
       alert("لطفا همه فیلدهای مورد نیاز را پر کنید");
       return;
     }
@@ -156,7 +168,6 @@ function TechnicianSubmit() {
 
       if (response.data.status === "success") {
         setGeneratedFormCode(response.data.formcode);
-        alert("فرم ثبت شد");
         setAghlam({
           formcode: formcode,
           kalaname: "",
@@ -177,55 +188,56 @@ function TechnicianSubmit() {
     }
   };
 
-  const handleTechSubmit = (e) => {
+  const handleTechSubmit = async (e) => {
     e.preventDefault();
-    api
-      .post("/technician", tech)
-      .then((result) => {
-        if (result.data.Status) {
-          alert("اقلام با موفقیت ثبت شد");
-        } else {
-          alert(result.data.Error);
-        }
-      })
-      .catch((err) => console.log(err));
-  };
-
-  const handleSelectChange = (event) => {
-    if (event.target.value === "بله") {
-      setShow(true);
-    } else {
-      setShow(false);
+    if (!tech.personel || !tech.personelnumber) {
+      alert("لطفا همه فیلدهای مورد نیاز را پر کنید");
+      return;
     }
-  };
+    try {
+      const response = await api.post("/api/personels/", {
+        formcode: values.formcode || formcode,
+        personel: tech.personel,
+        personelnumber: tech.personelnumber,
+        datesubmit: tech.datesubmit,
+        specialjob: tech.specialjob,
+        starttimerepair: tech.starttimerepair,
+        endtimerepair: tech.endtimerepair,
+        repairstatus: tech.repairstatus,
+        unitrepair: tech.unitrepair,
+        shift: tech.shift,
+        delayreason: tech.delayreason,
+        failurereason: tech.failurereason,
+        failurereasondescription: tech.failurereasondescription,
+        suggestionfailure: tech.suggestionfailure,
+      });
 
-  const handleSend = () => {
-    // handleSubmit();
-    handleClose();
-  };
-
-  const handleSelectChangePermit = (event) => {
-    if (event.target.value === "بله") {
-      setShowPermit(true);
-    } else {
-      setShowPermit(false);
-    }
-  };
-
-  const handleClose = () => {
-    setShow(false);
-  };
-
-  const handleModalClose = (modalType) => {
-    switch (modalType) {
-      case "aghlam":
-        setShowAghlam(true);
-        break;
-      case "tech":
-        setShowTech(true);
-        break;
-      default:
-        break;
+      if (response.data.status === "success") {
+        alert("فرم ثبت شد");
+        setTech({
+          formcode: formcode,
+          personel: "",
+          personelnumber: "",
+          datesubmit: "",
+          specialjob: "کارشناس",
+          starttimerepair: "",
+          endtimerepair: "",
+          repairstatus: "تعمیر کامل و قابل کاربری است",
+          unitrepair: "Mechanic",
+          shift: "A",
+          delayreason: "نبود قطعه یدکی",
+          failurereason: "اضافه بار",
+          failurereasondescription: "",
+          suggestionfailure: "",
+        });
+        setTimeout(() => {
+          setGeneratedFormCode("");
+        }, 3000);
+      } else {
+        console.error("⚠️ خطا در ثبت فرم:", response.data.message);
+      }
+    } catch (error) {
+      console.error("❌ خطا در ثبت فرم:", error);
     }
   };
 
@@ -274,6 +286,7 @@ function TechnicianSubmit() {
                           id="failurepart"
                           placeholder="نام قسمت معیوب(بر اساس تکسونومی)"
                           className="outline-none text-14 w-full font-normal flex justify-center text-center  items-center rounded-md shadow-lg border-2 "
+                          value={values.failurepart}
                           onChange={handleInputChange}
                           required
                         />
@@ -290,6 +303,7 @@ function TechnicianSubmit() {
                           name="failuretime"
                           className="outline-none text-14 w-full font-normal flex justify-center text-center  items-center rounded-md shadow-lg border-2 p-2 h-11"
                           id="failuretime"
+                          value={values.failuretime}
                           onChange={handleInputChange}
                           required
                         />
@@ -306,6 +320,7 @@ function TechnicianSubmit() {
                           name="sparetime"
                           id="sparetime"
                           className="outline-none text-14 w-full font-normal flex justify-center text-center  items-center rounded-md shadow-lg border-2 p-2 h-11"
+                          value={values.sparetime}
                           onChange={handleInputChange}
                           required
                         />
@@ -322,6 +337,7 @@ function TechnicianSubmit() {
                           name="startfailuretime"
                           id="startfailuretime"
                           className="outline-none text-14 w-full font-normal flex justify-center text-center  items-center rounded-md shadow-lg border-2 h-11 "
+                          value={values.startfailuretime}
                           onChange={handleInputChange}
                           required
                         />
@@ -338,6 +354,7 @@ function TechnicianSubmit() {
                           id="problemdescription"
                           className="outline-none text-14 w-full font-normal flex justify-center text-center  items-center rounded-md shadow-lg border-2 p-2 h-11 m-2"
                           placeholder="کلیات شرح عیب مشاهده شده را توضیح دهید : "
+                          value={values.problemdescription}
                           onChange={handleInputChange}
                           required
                         />
@@ -374,7 +391,7 @@ function TechnicianSubmit() {
                             <main className="max-w-7xl mx-auto py-6 px-4 lg:px-8">
                               <motion.div>
                                 <div className="fixed inset-0 flex items-center justify-center z-20">
-                                  <div className="p-4 rounded">
+                                  <div className="rounded">
                                     <div className="container">
                                       <form onSubmit={handleAghlamSubmit}>
                                         <header className="flex mb-6 justify-center text-center font-bold">
@@ -561,380 +578,376 @@ function TechnicianSubmit() {
                       )}
                       {showTech && (
                         <>
-                          <div className="fixed inset-0 bg-black bg-opacity-50 z-10"></div>
-                          <div className="fixed inset-0 flex items-center justify-center z-20">
-                            <div className="bg-white p-4 rounded">
-                              <div className="container">
-                                <header className="flex">
-                                  سرپرست/مسئول تعمیرات
-                                </header>
-                                <div className="grid grid-cols-2 gap-4">
-                                  <div>
-                                    <label
-                                      htmlFor="personel"
-                                      className="flex justify-center items-center"
-                                    >
-                                      پرسنل انجام دهنده
-                                    </label>
-                                    <input
-                                      type="text"
-                                      name="personel"
-                                      id="personel"
-                                      placeholder="نام و نام خانوادگی پرسنل"
-                                      className="outline-none text-14 w-full font-normal flex justify-center text-center  items-center rounded-md shadow-lg border-2 p-2 h-11 m-2"
-                                      onChange={(e) =>
-                                        setTech({
-                                          ...tech,
-                                          personel: e.target.value,
-                                        })
-                                      }
-                                      required
-                                    />
-                                  </div>
-                                  <div>
-                                    <label
-                                      htmlFor="personelnumber"
-                                      className="flex justify-center items-center"
-                                    >
-                                      شماره پرسنلی
-                                    </label>
-                                    <input
-                                      type="text"
-                                      name="personelnumber"
-                                      id="personelnumber"
-                                      placeholder="شماره پرسنلی را وارد کنید"
-                                      className="outline-none text-14 w-full font-normal flex justify-center text-center  items-center rounded-md shadow-lg border-2 p-2 h-11 m-2"
-                                      onChange={(e) =>
-                                        setTech({
-                                          ...tech,
-                                          personelnumber: e.target.value,
-                                        })
-                                      }
-                                      required
-                                    />
-                                  </div>
-                                  <div>
-                                    <label
-                                      htmlFor="datesubmit"
-                                      className="flex justify-center items-center"
-                                    >
-                                      تاریخ انجام
-                                    </label>
-                                    <input
-                                      type="datetime-local"
-                                      name="datesubmit"
-                                      id="datesubmit"
-                                      className="outline-none text-14 w-full font-normal flex text-center items-center rounded-md shadow-lg border-2 p-2 h-11 m-2"
-                                      onChange={(e) =>
-                                        setTech({
-                                          ...tech,
-                                          datesubmit: e.target.value,
-                                        })
-                                      }
-                                      required
-                                    />
-                                  </div>
-                                  <div>
-                                    <label
-                                      htmlFor="specialjob"
-                                      className="flex justify-center items-center"
-                                    >
-                                      مهارت
-                                    </label>
-                                    <select
-                                      name="specialjob"
-                                      id="specialjob"
-                                      className="outline-none text-14 w-full font-normal flex text-center items-center rounded-md shadow-lg border-2 p-2 h-11 m-2"
-                                      onChange={(e) =>
-                                        setTech({
-                                          ...tech,
-                                          specialjob: e.target.value,
-                                        })
-                                      }
-                                      required
-                                    >
-                                      <option value="کارشناس">کارشناس</option>
-                                      <option value="رئیس">رئیس</option>
-                                      <option value="سرشیفت">سرشیفت</option>
-                                      <option value="سرپرست">سرپرست</option>
-                                      <option value="تکنسین">تکنسین</option>
-                                      <option value="تعمیرکار">تعمیرکار</option>
-                                    </select>
-                                  </div>
-                                  <div>
-                                    <label
-                                      htmlFor="starttimerepair"
-                                      className="flex justify-center items-center"
-                                    >
-                                      ساعت شروع تعمیرات
-                                    </label>
-                                    <input
-                                      type="datetime-local"
-                                      name="starttimerepair"
-                                      id="starttimerepair"
-                                      className="outline-none text-14 w-full font-normal flex text-center items-center rounded-md shadow-lg border-2 p-2 h-11 m-2"
-                                      onChange={(e) =>
-                                        setTech({
-                                          ...tech,
-                                          starttimerepair: e.target.value,
-                                        })
-                                      }
-                                      required
-                                    />
-                                  </div>
-                                  <div>
-                                    <label
-                                      htmlFor="endtimerepair"
-                                      className="flex justify-center items-center"
-                                    >
-                                      ساعت پایان تعمیرات
-                                    </label>
-                                    <input
-                                      type="datetime-local"
-                                      name="endtimerepair"
-                                      id="endtimerepair"
-                                      className="outline-none text-14 w-full font-normal flex text-center items-center rounded-md shadow-lg border-2 p-2 h-11 m-2"
-                                      onChange={(e) =>
-                                        setTech({
-                                          ...tech,
-                                          endtimerepair: e.target.value,
-                                        })
-                                      }
-                                      required
-                                    />
-                                  </div>
-                                  <div>
-                                    <label
-                                      htmlFor="repairstatus"
-                                      className="flex justify-center items-center"
-                                    >
-                                      وضعیت تعمیر
-                                    </label>
-                                    <select
-                                      name="repairstatus"
-                                      id="repairstatus"
-                                      className="outline-none text-14 text-center w-full font-normal flex items-center rounded-md shadow-lg border-2 p-2 h-11 m-2"
-                                      onChange={(e) =>
-                                        setTech({
-                                          ...tech,
-                                          repairstatus: e.target.value,
-                                        })
-                                      }
-                                      required
-                                    >
-                                      <option value="تعمیر کامل و قابل کاربری است">
-                                        تعمیر کامل و قابل کاربری است
-                                      </option>
-                                      <option value="نیاز به تعمیر مجدد دارد">
-                                        نیاز به تعمیر مجدد دارد
-                                      </option>
-                                      <option value="نیاز به بازرسی مجدد دارد">
-                                        نیاز به بازرسی مجدد دارد
-                                      </option>
-                                      <option value="تعمیر کامل نیست و نیاز به تکمیل دارد">
-                                        تعمیر کامل نیست و نیاز به تکمیل دارد
-                                      </option>
-                                    </select>
-                                  </div>
-                                  <div>
-                                    <label
-                                      htmlFor="unitrepair"
-                                      className="flex justify-center items-center"
-                                    >
-                                      {" "}
-                                      واحد انجام دهنده
-                                    </label>
-                                    <select
-                                      name="unitrepair"
-                                      id="unitrepair"
-                                      className="outline-none text-14 w-full font-normal flex justify-center text-center  items-center rounded-md shadow-lg border-2 p-2 h-11 m-2"
-                                      onChange={(e) =>
-                                        setTech({
-                                          ...tech,
-                                          unitrepair: e.target.value,
-                                        })
-                                      }
-                                      required
-                                    >
-                                      <option value="Mechanic">Mechanic</option>
-                                      <option value="Electric">Electric</option>
-                                      <option value="Utility">Utility</option>
-                                      <option value="Production">
-                                        Production
-                                      </option>
-                                    </select>
-                                  </div>
-                                  <div>
-                                    <label
-                                      htmlFor="shift"
-                                      className="flex justify-center items-center"
-                                    >
-                                      شیفت
-                                    </label>
-                                    <select
-                                      name="shift"
-                                      id="shift"
-                                      className="outline-none text-14 w-full font-normal flex justify-center text-center  items-center rounded-md shadow-lg border-2 p-2 h-11 m-2"
-                                      onChange={(e) =>
-                                        setTech({
-                                          ...tech,
-                                          shift: e.target.value,
-                                        })
-                                      }
-                                      required
-                                    >
-                                      <option value="A">A</option>
-                                      <option value="B">B</option>
-                                      <option value="C">C</option>
-                                    </select>
-                                  </div>
-                                  <div>
-                                    <label
-                                      htmlFor="delayreason"
-                                      className="flex justify-center items-center"
-                                    >
-                                      دلیل تاخیر
-                                    </label>
-                                    <select
-                                      name="delayreason"
-                                      id="delayreason"
-                                      className="outline-none text-14 w-full font-normal flex justify-center text-center  items-center rounded-md shadow-lg border-2 p-2 h-11 m-2"
-                                      onChange={(e) =>
-                                        setTech({
-                                          ...tech,
-                                          delayreason: e.target.value,
-                                        })
-                                      }
-                                      required
-                                    >
-                                      <option value="نبود قطعه یدکی">
-                                        نبود قطعه یدکی
-                                      </option>
-                                      <option value="نبودابزار و تجهیزات مناسب">
-                                        نبود ابزار و تجهیزات مناسب
-                                      </option>
-                                      <option value="عدم حضور متخصص تعمیرات">
-                                        عدم حضوری متخصص تعمیرات
-                                      </option>
-                                      <option value="کمبود نیرو">
-                                        کمبود نیرو
-                                      </option>
-                                      <option value="برونسپاری">
-                                        برونسپاری
-                                      </option>
-                                      <option value="تاخیر در صدور مجوزها">
-                                        تاخیر در صدور مجوزها
-                                      </option>
-                                      <option value="تاخیر در ماشین آلات">
-                                        تاخیر در ماشین آلات
-                                      </option>
-                                    </select>
-                                  </div>
-                                  <div>
-                                    <label
-                                      htmlFor="failurereason"
-                                      className="flex justify-center items-center"
-                                    >
-                                      دلیل خرابی
-                                    </label>
-                                    <select
-                                      name="failurereason"
-                                      id="failurereason"
-                                      className="outline-none text-14 w-full font-normal flex justify-center text-center  items-center rounded-md shadow-lg border-2 p-2 h-11 m-2"
-                                      onChange={(e) =>
-                                        setTech({
-                                          ...tech,
-                                          failurereason: e.target.value,
-                                        })
-                                      }
-                                      required
-                                    >
-                                      {" "}
-                                      <option value="اضافه بار">
-                                        اضافه بار
-                                      </option>
-                                      <option value="تنظیم نادرست">
-                                        تنظیم نادرست
-                                      </option>
-                                      <option value="حادثه">حادثه</option>
-                                      <option value="طراحی غلط">
-                                        طراحی غلط
-                                      </option>
-                                      <option value="بهره برداری نادرست">
-                                        بهره برداری نادرست
-                                      </option>
-                                      <option value="نگهداری ضعیف">
-                                        نگهداری ضعیف
-                                      </option>
-                                      <option value="فرسودگی">فرسودگی</option>
-                                      <option value="نامرغوب بودن قطعات">
-                                        نامرغوب بودن قطعات
-                                      </option>
-                                      <option value="نبود / کمبود اطلاعات فنی">
-                                        نبود / کمبود اطلاعات فنی
-                                      </option>
-                                      <option value="تاخیر در ارجاع مکاتبات">
-                                        تاخیر در ارجاع مکاتبات
-                                      </option>
-                                      <option value="نامناسب بودن تعمیرات قبلی">
-                                        نامناسب بودن تعمیرات قبلی
-                                      </option>
-                                    </select>
-                                  </div>
-                                  <div>
-                                    <label
-                                      htmlFor="failurereasondescription"
-                                      className="flex justify-center items-center"
-                                    >
-                                      شرح دلیل خرابی
-                                    </label>
-                                    <textarea
-                                      placeholder="دلیل خرابی را توضیح دهید"
-                                      name="failurereasondescription"
-                                      id="failurereasondescription"
-                                      className="outline-none text-14 w-full font-normal flex justify-center text-center  items-center rounded-md shadow-lg border-2 p-2 h-11 m-2"
-                                      onChange={(e) =>
-                                        setTech({
-                                          ...tech,
-                                          failurereasondescription:
-                                            e.target.value,
-                                        })
-                                      }
-                                      required
-                                    ></textarea>
-                                  </div>
-                                  <div>
-                                    <label
-                                      htmlFor="suggestionfailure"
-                                      className="flex justify-center items-center"
-                                    >
-                                      پیشنهاد
-                                    </label>
-                                    <textarea
-                                      placeholder="پیشنهاد تکنیسین"
-                                      name="suggestionfailure"
-                                      id="suggestionfailure"
-                                      className="outline-none text-14 w-full font-normal flex justify-center text-center  items-center rounded-md shadow-lg border-2 p-2 h-11 m-2"
-                                      onChange={(e) =>
-                                        setTech({
-                                          ...tech,
-                                          suggestionfailure: e.target.value,
-                                        })
-                                      }
-                                      required
-                                    ></textarea>
+                          <div className="flex-1 overflow-auto relative z-10">
+                            <main className="max-w-7xl mx-auto py-6 px-4 lg:px-8">
+                              <motion.div>
+                                <div className="fixed inset-3 flex items-center justify-center z-20">
+                                  <div className="container">
+                                    <form onSubmit={handleTechSubmit}>
+                                      <header className="flex text-center justify-center mb-5">
+                                        سرپرست/مسئول تعمیرات
+                                      </header>
+                                      <div className="grid grid-cols-2 gap-4">
+                                        <div className="input-field">
+                                          <label
+                                            htmlFor="formcode"
+                                            className="flex justify-center text-center"
+                                          >
+                                            شماره درخواست
+                                          </label>
+                                          <input
+                                            type="text"
+                                            id="formcode"
+                                            placeholder="شماره درخواست"
+                                            className="outline-none text-14 w-full font-normal flex justify-center text-center  items-center rounded-md shadow-lg border-2 p-2 h-11 m-2"
+                                            value={values?.formcode || formcode} // Pre-fill with formcode from URL
+                                            disabled
+                                            required
+                                          />
+                                        </div>
+                                        <div>
+                                          <label
+                                            htmlFor="personel"
+                                            className="flex justify-center items-center"
+                                          >
+                                            پرسنل انجام دهنده
+                                          </label>
+                                          <input
+                                            type="text"
+                                            name="personel"
+                                            id="personel"
+                                            placeholder="نام و نام خانوادگی پرسنل"
+                                            className="outline-none text-14 w-full font-normal flex justify-center text-center  items-center rounded-md shadow-lg border-2 p-2 h-11 m-2"
+                                            value={tech.personel}
+                                            onChange={handleInputChange}
+                                            required
+                                          />
+                                        </div>
+                                        <div>
+                                          <label
+                                            htmlFor="personelnumber"
+                                            className="flex justify-center items-center"
+                                          >
+                                            شماره پرسنلی
+                                          </label>
+                                          <input
+                                            type="text"
+                                            name="personelnumber"
+                                            id="personelnumber"
+                                            placeholder="شماره پرسنلی را وارد کنید"
+                                            className="outline-none text-14 w-full font-normal flex justify-center text-center  items-center rounded-md shadow-lg border-2 p-2 h-11 m-2"
+                                            value={tech.personelnumber}
+                                            onChange={handleInputChange}
+                                            required
+                                          />
+                                        </div>
+                                        <div>
+                                          <label
+                                            htmlFor="datesubmit"
+                                            className="flex justify-center items-center"
+                                          >
+                                            تاریخ انجام
+                                          </label>
+                                          <input
+                                            type="datetime-local"
+                                            name="datesubmit"
+                                            id="datesubmit"
+                                            className="outline-none text-14 w-full font-normal flex text-center items-center rounded-md shadow-lg border-2 p-2 h-11 m-2"
+                                            value={tech.datesubmit}
+                                            onChange={handleInputChange}
+                                            required
+                                          />
+                                        </div>
+                                        <div>
+                                          <label
+                                            htmlFor="specialjob"
+                                            className="flex justify-center items-center"
+                                          >
+                                            مهارت
+                                          </label>
+                                          <select
+                                            name="specialjob"
+                                            id="specialjob"
+                                            className="outline-none text-14 w-full font-normal flex text-center items-center rounded-md shadow-lg border-2 p-2 h-11 m-2"
+                                            value={tech.specialjob}
+                                            onChange={handleInputChange}
+                                            required
+                                          >
+                                            <option value="کارشناس">
+                                              کارشناس
+                                            </option>
+                                            <option value="رئیس">رئیس</option>
+                                            <option value="سرشیفت">
+                                              سرشیفت
+                                            </option>
+                                            <option value="سرپرست">
+                                              سرپرست
+                                            </option>
+                                            <option value="تکنسین">
+                                              تکنسین
+                                            </option>
+                                            <option value="تعمیرکار">
+                                              تعمیرکار
+                                            </option>
+                                          </select>
+                                        </div>
+                                        <div>
+                                          <label
+                                            htmlFor="starttimerepair"
+                                            className="flex justify-center items-center"
+                                          >
+                                            ساعت شروع تعمیرات
+                                          </label>
+                                          <input
+                                            type="datetime-local"
+                                            name="starttimerepair"
+                                            id="starttimerepair"
+                                            className="outline-none text-14 w-full font-normal flex text-center items-center rounded-md shadow-lg border-2 p-2 h-11 m-2"
+                                            value={tech.starttimerepair}
+                                            onChange={handleInputChange}
+                                            required
+                                          />
+                                        </div>
+                                        <div>
+                                          <label
+                                            htmlFor="endtimerepair"
+                                            className="flex justify-center items-center"
+                                          >
+                                            ساعت پایان تعمیرات
+                                          </label>
+                                          <input
+                                            type="datetime-local"
+                                            name="endtimerepair"
+                                            id="endtimerepair"
+                                            className="outline-none text-14 w-full font-normal flex text-center items-center rounded-md shadow-lg border-2 p-2 h-11 m-2"
+                                            value={tech.endtimerepair}
+                                            onChange={handleInputChange}
+                                            required
+                                          />
+                                        </div>
+                                        <div>
+                                          <label
+                                            htmlFor="repairstatus"
+                                            className="flex justify-center items-center"
+                                          >
+                                            وضعیت تعمیر
+                                          </label>
+                                          <select
+                                            name="repairstatus"
+                                            id="repairstatus"
+                                            className="outline-none text-14 text-center w-full font-normal flex items-center rounded-md shadow-lg border-2 p-2 h-11 m-2"
+                                            value={tech.repairstatus}
+                                            onChange={handleInputChange}
+                                            required
+                                          >
+                                            <option value="تعمیر کامل و قابل کاربری است">
+                                              تعمیر کامل و قابل کاربری است
+                                            </option>
+                                            <option value="نیاز به تعمیر مجدد دارد">
+                                              نیاز به تعمیر مجدد دارد
+                                            </option>
+                                            <option value="نیاز به بازرسی مجدد دارد">
+                                              نیاز به بازرسی مجدد دارد
+                                            </option>
+                                            <option value="تعمیر کامل نیست و نیاز به تکمیل دارد">
+                                              تعمیر کامل نیست و نیاز به تکمیل
+                                              دارد
+                                            </option>
+                                          </select>
+                                        </div>
+                                        <div>
+                                          <label
+                                            htmlFor="unitrepair"
+                                            className="flex justify-center items-center"
+                                          >
+                                            {" "}
+                                            واحد انجام دهنده
+                                          </label>
+                                          <select
+                                            name="unitrepair"
+                                            id="unitrepair"
+                                            className="outline-none text-14 w-full font-normal flex justify-center text-center  items-center rounded-md shadow-lg border-2 p-2 h-11 m-2"
+                                            value={tech.unitrepair}
+                                            onChange={handleInputChange}
+                                            required
+                                          >
+                                            <option value="Mechanic">
+                                              Mechanic
+                                            </option>
+                                            <option value="Electric">
+                                              Electric
+                                            </option>
+                                            <option value="Utility">
+                                              Utility
+                                            </option>
+                                            <option value="Production">
+                                              Production
+                                            </option>
+                                          </select>
+                                        </div>
+                                        <div>
+                                          <label
+                                            htmlFor="shift"
+                                            className="flex justify-center items-center"
+                                          >
+                                            شیفت
+                                          </label>
+                                          <select
+                                            name="shift"
+                                            id="shift"
+                                            className="outline-none text-14 w-full font-normal flex justify-center text-center  items-center rounded-md shadow-lg border-2 p-2 h-11 m-2"
+                                            value={tech.shift}
+                                            onChange={handleInputChange}
+                                            required
+                                          >
+                                            <option value="A">A</option>
+                                            <option value="B">B</option>
+                                            <option value="C">C</option>
+                                          </select>
+                                        </div>
+                                        <div>
+                                          <label
+                                            htmlFor="delayreason"
+                                            className="flex justify-center items-center"
+                                          >
+                                            دلیل تاخیر
+                                          </label>
+                                          <select
+                                            name="delayreason"
+                                            id="delayreason"
+                                            className="outline-none text-14 w-full font-normal flex justify-center text-center  items-center rounded-md shadow-lg border-2 p-2 h-11 m-2"
+                                            value={tech.delayreason}
+                                            onChange={handleInputChange}
+                                            required
+                                          >
+                                            <option value="نبود قطعه یدکی">
+                                              نبود قطعه یدکی
+                                            </option>
+                                            <option value="نبودابزار و تجهیزات مناسب">
+                                              نبود ابزار و تجهیزات مناسب
+                                            </option>
+                                            <option value="عدم حضور متخصص تعمیرات">
+                                              عدم حضوری متخصص تعمیرات
+                                            </option>
+                                            <option value="کمبود نیرو">
+                                              کمبود نیرو
+                                            </option>
+                                            <option value="برونسپاری">
+                                              برونسپاری
+                                            </option>
+                                            <option value="تاخیر در صدور مجوزها">
+                                              تاخیر در صدور مجوزها
+                                            </option>
+                                            <option value="تاخیر در ماشین آلات">
+                                              تاخیر در ماشین آلات
+                                            </option>
+                                          </select>
+                                        </div>
+                                        <div>
+                                          <label
+                                            htmlFor="failurereason"
+                                            className="flex justify-center items-center"
+                                          >
+                                            دلیل خرابی
+                                          </label>
+                                          <select
+                                            name="failurereason"
+                                            id="failurereason"
+                                            className="outline-none text-14 w-full font-normal flex justify-center text-center  items-center rounded-md shadow-lg border-2 p-2 h-11 m-2"
+                                            value={tech.failurereason}
+                                            onChange={handleInputChange}
+                                            required
+                                          >
+                                            {" "}
+                                            <option value="اضافه بار">
+                                              اضافه بار
+                                            </option>
+                                            <option value="تنظیم نادرست">
+                                              تنظیم نادرست
+                                            </option>
+                                            <option value="حادثه">حادثه</option>
+                                            <option value="طراحی غلط">
+                                              طراحی غلط
+                                            </option>
+                                            <option value="بهره برداری نادرست">
+                                              بهره برداری نادرست
+                                            </option>
+                                            <option value="نگهداری ضعیف">
+                                              نگهداری ضعیف
+                                            </option>
+                                            <option value="فرسودگی">
+                                              فرسودگی
+                                            </option>
+                                            <option value="نامرغوب بودن قطعات">
+                                              نامرغوب بودن قطعات
+                                            </option>
+                                            <option value="نبود / کمبود اطلاعات فنی">
+                                              نبود / کمبود اطلاعات فنی
+                                            </option>
+                                            <option value="تاخیر در ارجاع مکاتبات">
+                                              تاخیر در ارجاع مکاتبات
+                                            </option>
+                                            <option value="نامناسب بودن تعمیرات قبلی">
+                                              نامناسب بودن تعمیرات قبلی
+                                            </option>
+                                          </select>
+                                        </div>
+                                        <div>
+                                          <label
+                                            htmlFor="failurereasondescription"
+                                            className="flex justify-center items-center"
+                                          >
+                                            شرح دلیل خرابی
+                                          </label>
+                                          <textarea
+                                            placeholder="دلیل خرابی را توضیح دهید"
+                                            name="failurereasondescription"
+                                            id="failurereasondescription"
+                                            className="outline-none text-14 w-full font-normal flex justify-center text-center  items-center rounded-md shadow-lg border-2 p-2 h-11 m-2"
+                                            value={
+                                              tech.failurereasondescription
+                                            }
+                                            onChange={handleInputChange}
+                                            required
+                                          ></textarea>
+                                        </div>
+                                        <div>
+                                          <label
+                                            htmlFor="suggestionfailure"
+                                            className="flex justify-center items-center"
+                                          >
+                                            پیشنهاد
+                                          </label>
+                                          <textarea
+                                            placeholder="پیشنهاد تکنیسین"
+                                            name="suggestionfailure"
+                                            id="suggestionfailure"
+                                            className="outline-none text-14 w-full font-normal flex justify-center text-center  items-center rounded-md shadow-lg border-2 p-2 h-11 m-2"
+                                            value={tech.suggestionfailure}
+                                            onChange={handleInputChange}
+                                          ></textarea>
+                                        </div>
+                                      </div>
+                                      <div className="flex justify-center text-center">
+                                        <button
+                                          className="nextBtn"
+                                          type="submit"
+                                          onClick={handleTechSubmit}
+                                        >
+                                          تایید
+                                        </button>
+                                        <button
+                                          className="nextBtnCancel"
+                                          onClick={() => setShowTech(false)}
+                                        >
+                                          خروج
+                                        </button>
+                                      </div>
+                                    </form>
                                   </div>
                                 </div>
-                                <div className="flex">
-                                  <button onClick={handleTechSubmit}>
-                                    تایید
-                                  </button>
-                                  <button onClick={handleModalClose}>
-                                    خروج
-                                  </button>
-                                </div>
-                              </div>
-                            </div>
+                              </motion.div>
+                            </main>
                           </div>
                         </>
                       )}

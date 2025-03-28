@@ -55,6 +55,7 @@ class TechnicianSubmit(models.Model):
     sparetime = models.DateTimeField(null=True)
     startfailuretime = models.DateTimeField(null=True)
     problemdescription = models.TextField(blank=True, null=True)
+
     def __str__(self):
         return f"Technician Submit {self.formcode}"
 
@@ -94,6 +95,13 @@ class TechnicianPersonel(models.Model):
     failurereason = models.CharField(max_length=50)
     failurereasondescription = models.CharField(max_length=50)
     suggestionfailure = models.CharField(max_length=50)
+    submit_form = models.ForeignKey(
+        SubmitForm,
+        on_delete=models.CASCADE,
+        related_name="personels",
+        null=True,
+        blank=True,
+    )
 
     def __str__(self):
         return f"Personel Submit {self.formcode}"

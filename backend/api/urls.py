@@ -10,6 +10,7 @@ from .views import (
     SubmitFormDetailView,
     SubmitFormDetailByCodeView,
     AghlamSubmit,
+    PersonelSubmit,
 )
 
 urlpatterns = [
@@ -34,4 +35,5 @@ urlpatterns = [
     path("api/techniciansubmit/", TechnicianFormSubmit, name="techniciansubmit"),
     # Aghlam Submit EndPoints
     path("api/aghlams/", AghlamSubmit, name="aghlams"),
+    path("api/personels/", PersonelSubmit, name="personels"),
 ]

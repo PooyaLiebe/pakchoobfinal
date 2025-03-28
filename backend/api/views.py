@@ -284,6 +284,66 @@ def AghlamSubmit(request):
         return Response({"status": "success", "data": list(submissions)})
 
 
+@api_view(["POST", "GET"])
+@permission_classes([AllowAny])
+def PersonelSubmit(request):
+    if request.method == "POST":
+        # Extract data
+        formcode = request.data.get("formcode")
+        personel = request.data.get("personel")
+        personelnumber = request.data.get("personelnumber")
+        datesubmit = request.data.get("datesubmit")
+        specialjob = request.data.get("specialjob")
+        starttimerepair = request.data.get("starttimerepair")
+        endtimerepair = request.data.get("endtimerepair")
+        repairstatus = request.data.get("repairstatus")
+        unitrepair = request.data.get("unitrepair")
+        shift = request.data.get("shift")
+        delayreason = request.data.get("delayreason")
+        failurereason = request.data.get("failurereason")
+        failurereasondescription = request.data.get("failurereasondescription")
+        suggestionfailure = request.data.get("suggestionfailure")
+        submit_form = request.data.get("submit_form")
+
+        # Validate required fields
+        if not personel or not personelnumber:
+            return Response(
+                {"status": "error", "message": "Required fields are missing"},
+                status=400,
+            )
+
+        # Create and save form entry
+        try:
+            TechnicianPersonel.objects.create(
+                formcode=formcode,
+                personel=personel,
+                personelnumber=personelnumber,
+                datesubmit=datesubmit,
+                specialjob=specialjob,
+                starttimerepair=starttimerepair,
+                endtimerepair=endtimerepair,
+                repairstatus=repairstatus,
+                unitrepair=unitrepair,
+                shift=shift,
+                delayreason=delayreason,
+                failurereason=failurereason,
+                failurereasondescription=failurereasondescription,
+                suggestionfailure=suggestionfailure,
+                submit_form=submit_form,
+            )
+            return Response(
+                {"status": "success", "message": "Form submitted successfully"}
+            )
+        except Exception as e:
+            # Log the error and return it in the response
+            print(f"Error saving Personels: {e}")
+            return Response({"status": "error", "message": str(e)}, status=500)
+
+    elif request.method == "GET":
+        submissions = TechnicianPersonel.objects.all().values()
+        return Response({"status": "success", "data": list(submissions)})
+
+
 class SubmitFormListView(APIView):
     permission_classes = [
         AllowAny

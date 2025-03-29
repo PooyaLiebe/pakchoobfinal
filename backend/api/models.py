@@ -44,6 +44,19 @@ class SubmitForm(models.Model):
     faultdm = models.CharField(max_length=100, null=True)
     problemdescription = models.TextField(blank=True, null=True)
 
+    # Tracking activity
+    operator_submitted = models.BooleanField(default=False)
+    technician_submitted = models.BooleanField(default=False)
+    technician_status = models.CharField(
+        max_length=50,
+        choices=[
+            ("pending", "درحال انتظار برای ثبت تکنیسین"),
+            ("reviewed", "فرم توسط تکنیسین بررسی شد"),
+            ("returned", "فرم برگشت داده شد"),
+        ],
+        default="pending",
+    )
+
     def __str__(self):
         return self.formcode
 
@@ -55,6 +68,22 @@ class TechnicianSubmit(models.Model):
     sparetime = models.DateTimeField(null=True)
     startfailuretime = models.DateTimeField(null=True)
     problemdescription = models.TextField(blank=True, null=True)
+    jobstatus = models.CharField(
+        max_length=20,
+        choices=[
+            ("بله", "کار انجام شد"),
+            ("خیر", "کار انجام نشد"),
+            ("در حال انجام", "در حال انجام"),
+        ],
+        default="در حال انجام",
+    )
+    submit_form = models.ForeignKey(
+        SubmitForm,
+        on_delete=models.CASCADE,
+        related_name="technician_submits",
+        null=True,
+        blank=True,
+    )
 
     def __str__(self):
         return f"Technician Submit {self.formcode}"
@@ -98,7 +127,7 @@ class TechnicianPersonel(models.Model):
     submit_form = models.ForeignKey(
         SubmitForm,
         on_delete=models.CASCADE,
-        related_name="personels",
+        related_name="technician_personels",
         null=True,
         blank=True,
     )

@@ -9,6 +9,7 @@ from .views import (
     TechnicianFormSubmit,
     SubmitFormDetailView,
     SubmitFormDetailByCodeView,
+    TechnicianFormListView,
     AghlamSubmit,
     PersonelSubmit,
 )
@@ -33,7 +34,7 @@ urlpatterns = [
     ),
     # Technician Submit Endpoints
     path("api/techniciansubmit/", TechnicianFormSubmit, name="techniciansubmit"),
-    # Aghlam Submit EndPoints
+    path('api/techniciansubmit/list/',TechnicianFormListView.as_view(), name='techniciansubmit-list'),
     path("api/aghlams/", AghlamSubmit, name="aghlams"),
     path("api/personels/", PersonelSubmit, name="personels"),
 ]

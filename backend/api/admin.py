@@ -35,6 +35,8 @@ class AdminTechnicianForm(admin.ModelAdmin):
         "sparetime",
         "startfailuretime",
         "problemdescription",
+        "jobstatus",
+        "submit_form",
     ]
 
 

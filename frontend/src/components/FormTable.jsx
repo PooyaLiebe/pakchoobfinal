@@ -9,11 +9,12 @@ import { Link, Navigate } from "react-router-dom";
 
 const FormTable = () => {
   const [submitform, setSubmitform] = useState([]);
+  const [technicianform, setTechnicianForm] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalInput1, setModalInput1] = useState("");
   const [modalInput2, setModalInput2] = useState("");
   const [modalInput3, setModalInput3] = useState("");
-  const [userType, setUserType] = useState(""); // Example, change based on actual user logic
+  const [userType, setUserType] = useState("");
 
   const filteredForms = submitform.filter((form) => {
     if (userType === "mechanic") {
@@ -25,10 +26,9 @@ const FormTable = () => {
     } else if (userType === "utility") {
       return form.worktype === "utility";
     }
-    return true; // If no match, show all
+    return true;
   });
 
-  
   const getForm = async () => {
     try {
       const res = await api.get("/api/submitform/list/");
@@ -39,8 +39,34 @@ const FormTable = () => {
     }
   };
 
+  const getTechnicianForm = async () => {
+    try {
+      const res = await api.get("/api/techniciansubmit/list/");
+      console.log("API Response", res.data);
+
+      const updatedForms = res.data.map((form) => {
+        let statusText = "در حال انجام"; // Default case
+
+        if (form.jobstatus === "بله") {
+          statusText = "کار انجام شد";
+        } else if (form.jobstatus === "در حال انجام") {
+          statusText = "در حال انجام";
+        } else if (form.jobstatus === "خیر") {
+          statusText = "کار انجام نشد";
+        }
+
+        return { ...form, jobstatus: statusText };
+      });
+
+      setTechnicianForm(updatedForms); // Update state with modified data
+    } catch (err) {
+      console.error("Error Fetching data:", err);
+    }
+  };
+
   useEffect(() => {
     getForm();
+    getTechnicianForm();
   }, []);
 
   const handleDelete = async (id) => {
@@ -49,7 +75,6 @@ const FormTable = () => {
 
       if (res.status === 204) {
         alert("Form Deleted");
-        // Update state to remove the deleted item (more efficient than re-fetching)
         setSubmitform((prevForms) =>
           prevForms.filter((form) => form.id !== id)
         );
@@ -61,44 +86,6 @@ const FormTable = () => {
       console.error("Error deleting the form:", err);
       alert("Failed to delete the form");
     }
-  };
-
-  const handleSendModal = async () => {
-    try {
-      const res = await api.post("/api/forms/send", {
-        user_type: modalInput1.sendworktype, // The user_type selected in the modal
-        form_data: {
-          // Include relevant data to be sent
-          field1: modalInput2,
-          field2: modalInput3,
-        },
-      });
-      if (res.status === 200 || res.status === 201) {
-        alert("Data sent successfully!");
-      } else {
-        alert("Failed to send data.");
-      }
-    } catch (err) {
-      console.error("Error sending data:", err);
-      alert("Error occurred while sending data.");
-    } finally {
-      closeModal(); // Close the modal after sending
-    }
-  };
-
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setModalInput1("");
-    setModalInput2("");
-    setModalInput3("");
-  };
-
-  const handleSend = () => {
-    openModal();
   };
 
   return (
@@ -172,6 +159,9 @@ const FormTable = () => {
                 Problem Description
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                Status
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                 Actions
               </th>
             </tr>
@@ -228,6 +218,27 @@ const FormTable = () => {
                 </td>
                 <td className="px-6 py-4 text-gray-300">
                   {form.problemdescription || "N/A"}
+                </td>
+                <td className="px-6 py-4 text-gray-300">
+                  <span
+                    className={`px-3 py-1 rounded-full text-white ${
+                      form.jobstatus === "بله"
+                        ? "bg-green-500"
+                        : form.jobstatus === "در حال انجام"
+                        ? "bg-yellow-500"
+                        : form.jobstatus === "خیر"
+                        ? "bg-red-500"
+                        : "bg-gray-500"
+                    }`}
+                  >
+                    {form.jobstatus === "بله"
+                      ? "کار انجام شد"
+                      : form.jobstatus === "در حال انجام"
+                      ? "در حال انجام"
+                      : form.jobstatus === "خیر"
+                      ? "کار انجام نشد"
+                      : "N/A"}
+                  </span>
                 </td>
                 <td className="px-10 py-4 whitespace-nowrap text-sm text-gray-300">
                   {/* <Tooltip title={"Edit"} placement="top">

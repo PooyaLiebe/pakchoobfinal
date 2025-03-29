@@ -1,4 +1,4 @@
-import datetime
+import datetime, logging
 from django.shortcuts import get_object_or_404
 from django.utils.timezone import make_aware
 from django.contrib.auth import authenticate, get_user_model
@@ -10,6 +10,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import TokenAuthentication
+from .utils import generate_formcode
 from .serializers import (
     SubmitFormSerializer,
     TechnicianPersonelSerializer,
@@ -41,6 +42,7 @@ SECTION_CODES = {
 }
 
 User = get_user_model()
+logger = logging.getLogger(__name__)
 
 
 def generate_formcode(phase, section_code, problemdate):
@@ -169,18 +171,19 @@ def FormListCreate(request):
         return Response({"status": "error", "message": str(e)}, status=500)
 
 
-# TechnicianSubmit
 @api_view(["POST", "GET"])
 @permission_classes([AllowAny])
 def TechnicianFormSubmit(request):
     if request.method == "POST":
-        # Extract data
+        # Extract data from the request
         formcode = request.data.get("formcode")
         failurepart = request.data.get("failurepart", "")
         failuretime_str = request.data.get("failuretime", "")
         sparetime_str = request.data.get("sparetime", "")
         startfailuretime_str = request.data.get("startfailuretime", "")
         problemdescription = request.data.get("problemdescription", "")
+        jobstatus = request.data.get("jobstatus", "در حال انجام")
+        status = request.data.get("status", "")
 
         # Convert timestamps to timezone-aware datetime objects
         def parse_datetime(dt_str):
@@ -191,7 +194,7 @@ def TechnicianFormSubmit(request):
                     else None
                 )
             except ValueError:
-                return None  # Invalid date format
+                return None
 
         failuretime = parse_datetime(failuretime_str)
         sparetime = parse_datetime(sparetime_str)
@@ -204,23 +207,17 @@ def TechnicianFormSubmit(request):
                 status=400,
             )
 
-        # Check for invalid date formats
-        if failuretime_str and not failuretime:
-            return Response(
-                {"status": "error", "message": "Invalid failuretime format"}, status=400
-            )
-        if sparetime_str and not sparetime:
-            return Response(
-                {"status": "error", "message": "Invalid sparetime format"}, status=400
-            )
-        if startfailuretime_str and not startfailuretime:
-            return Response(
-                {"status": "error", "message": "Invalid startfailuretime format"},
-                status=400,
-            )
-
         # Create and save form entry
         try:
+            form = SubmitForm.objects.get(formcode=formcode)
+            if status == "completed":
+                form.technician_submitted = True
+                form.technician_status = "reviewed"
+            elif status == "not_possible":
+                form.technician_status = "returned"
+
+            form.save()
+
             TechnicianSubmit.objects.create(
                 formcode=formcode,
                 failurepart=failurepart,
@@ -228,16 +225,53 @@ def TechnicianFormSubmit(request):
                 sparetime=sparetime,
                 startfailuretime=startfailuretime,
                 problemdescription=problemdescription,
+                jobstatus=jobstatus,
+                submit_form=form,
             )
             return Response(
-                {"status": "success", "message": "Form submitted successfully"}
+                {
+                    "status": "success",
+                    "message": "Form submitted successfully",
+                    "technician_status": form.technician_status,
+                }
+            )
+
+        except SubmitForm.DoesNotExist:
+            return Response(
+                {"status": "error", "message": "Form not found"}, status=404
             )
         except Exception as e:
             return Response({"status": "error", "message": str(e)}, status=500)
 
     elif request.method == "GET":
-        submissions = TechnicianSubmit.objects.all().values()
-        return Response({"status": "success", "data": list(submissions)})
+        # Retrieve technician submissions and add an activity field
+        submissions = TechnicianSubmit.objects.all()
+
+        # Format the response data
+        updated_submissions = []
+        for form in submissions:
+            updated_submissions.append(
+                {
+                    "formcode": form.formcode,
+                    "failurepart": form.failurepart,
+                    "failuretime": form.failuretime,
+                    "sparetime": form.sparetime,
+                    "startfailuretime": form.startfailuretime,
+                    "problemdescription": form.problemdescription,
+                    "jobstatus": form.jobstatus,
+                    "activity": (
+                        "کار انجام شد"
+                        if form.jobstatus == "بله"
+                        else (
+                            "کار انجام نشد"
+                            if form.jobstatus == "خیر"
+                            else "در حال انجام"
+                        )
+                    ),
+                }
+            )
+
+        return Response({"status": "success", "data": updated_submissions})
 
 
 @api_view(["POST", "GET"])
@@ -259,7 +293,6 @@ def AghlamSubmit(request):
                 {"status": "error", "message": "Required fields are missing"},
                 status=400,
             )
-
         # Create and save form entry
         try:
             Aghlam.objects.create(
@@ -289,20 +322,20 @@ def AghlamSubmit(request):
 def PersonelSubmit(request):
     if request.method == "POST":
         # Extract data
-        formcode = request.data.get("formcode")
-        personel = request.data.get("personel")
-        personelnumber = request.data.get("personelnumber")
-        datesubmit = request.data.get("datesubmit")
-        specialjob = request.data.get("specialjob")
-        starttimerepair = request.data.get("starttimerepair")
-        endtimerepair = request.data.get("endtimerepair")
-        repairstatus = request.data.get("repairstatus")
-        unitrepair = request.data.get("unitrepair")
-        shift = request.data.get("shift")
-        delayreason = request.data.get("delayreason")
-        failurereason = request.data.get("failurereason")
-        failurereasondescription = request.data.get("failurereasondescription")
-        suggestionfailure = request.data.get("suggestionfailure")
+        formcode = request.data.get("formcode", "")
+        personel = request.data.get("personel", "")
+        personelnumber = request.data.get("personelnumber", "")
+        datesubmit = request.data.get("datesubmit", "")
+        specialjob = request.data.get("specialjob", "")
+        starttimerepair = request.data.get("starttimerepair", "")
+        endtimerepair = request.data.get("endtimerepair", "")
+        repairstatus = request.data.get("repairstatus", "")
+        unitrepair = request.data.get("unitrepair", "")
+        shift = request.data.get("shift", "")
+        delayreason = request.data.get("delayreason", "")
+        failurereason = request.data.get("failurereason", "")
+        failurereasondescription = request.data.get("failurereasondescription", "")
+        suggestionfailure = request.data.get("suggestionfailure", "")
         submit_form = request.data.get("submit_form")
 
         # Validate required fields
@@ -311,6 +344,20 @@ def PersonelSubmit(request):
                 {"status": "error", "message": "Required fields are missing"},
                 status=400,
             )
+
+        def parse_datetime(dt_str):
+            try:
+                return (
+                    make_aware(datetime.datetime.fromisoformat(dt_str))
+                    if dt_str
+                    else None
+                )
+            except ValueError:
+                return None  # Invalid date format
+
+        datesubmit = parse_datetime(datesubmit)
+        starttimerepair = parse_datetime(starttimerepair)
+        endtimerepair = parse_datetime(endtimerepair)
 
         # Create and save form entry
         try:
@@ -355,15 +402,56 @@ class SubmitFormListView(APIView):
         return Response(serializer.data)
 
 
+class TechnicianFormListView(APIView):
+    permission_classes = [
+        AllowAny
+    ]  # This allows access to all users, authenticated or not
+
+    def get(self, request):
+        forms = TechnicianSubmit.objects.all()
+        serializer = TechnicianSubmitSerializer(forms, many=True)
+        return Response(serializer.data)
+
+
 @api_view(["DELETE"])
 @permission_classes([AllowAny])
 def delete_form(request, pk):
     try:
-        form = SubmitForm.objects.get(pk=pk)
+        form = get_object_or_404(SubmitForm, pk=pk)
+
+        # Logging before deletion (for debugging)
+        logger.info(f"Deleting SubmitForm ID: {pk}")
+
+        # Delete related records explicitly (not required if CASCADE is set, but ensures cleanup)
+        deleted_technicians = TechnicianPersonel.objects.filter(
+            submit_form=form
+        ).delete()
+        deleted_aghlams = Aghlam.objects.filter(submit_form=form).delete()
+        deleted_technician_submits = TechnicianSubmit.objects.filter(
+            submit_form=form
+        ).delete()
+
+        logger.info(f"Deleted related TechnicianPersonel: {deleted_technicians}")
+        logger.info(f"Deleted related Aghlam: {deleted_aghlams}")
+        logger.info(f"Deleted related TechnicianSubmit: {deleted_technician_submits}")
+
+        # Now delete the SubmitForm itself
         form.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+
+        return Response(
+            {"message": "Form and related records deleted successfully"},
+            status=status.HTTP_204_NO_CONTENT,
+        )
+
     except SubmitForm.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response({"error": "Form not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    except Exception as e:
+        logger.error(f"Error deleting form {pk}: {str(e)}")
+        return Response(
+            {"error": "Internal Server Error"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
 
 
 class IsPm(permissions.BasePermission):

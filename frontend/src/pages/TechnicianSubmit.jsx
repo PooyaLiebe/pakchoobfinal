@@ -14,6 +14,7 @@ function TechnicianSubmit() {
     sparetime: "",
     startfailuretime: "",
     problemdescription: "",
+    jobstatus: "بله",
   });
   const { formcode } = useParams();
   const [show, setShow] = useState(false);
@@ -107,6 +108,7 @@ function TechnicianSubmit() {
           sparetime: "",
           startfailuretime: "",
           problemdescription: "",
+          jobstatus: "در حال انجام",
         });
         setTimeout(() => {
           setGeneratedFormCode(""); // Clears form code after 3 seconds
@@ -199,10 +201,10 @@ function TechnicianSubmit() {
         formcode: values.formcode || formcode,
         personel: tech.personel,
         personelnumber: tech.personelnumber,
-        datesubmit: tech.datesubmit,
+        datesubmit: formatDateTime(tech.datesubmit),
         specialjob: tech.specialjob,
-        starttimerepair: tech.starttimerepair,
-        endtimerepair: tech.endtimerepair,
+        starttimerepair: formatDateTime(tech.starttimerepair),
+        endtimerepair: formatDateTime(tech.endtimerepair),
         repairstatus: tech.repairstatus,
         unitrepair: tech.unitrepair,
         shift: tech.shift,
@@ -214,22 +216,18 @@ function TechnicianSubmit() {
 
       if (response.data.status === "success") {
         alert("فرم ثبت شد");
-        setTech({
-          formcode: formcode,
-          personel: "",
-          personelnumber: "",
-          datesubmit: "",
+        setTech((prevTech) => ({
+          ...prevTech, // Keep all previous values
+          formcode: formcode, // Reset formcode
+          personel: "", // Clear personel
+          personelnumber: "", // Clear personelnumber
           specialjob: "کارشناس",
-          starttimerepair: "",
-          endtimerepair: "",
           repairstatus: "تعمیر کامل و قابل کاربری است",
           unitrepair: "Mechanic",
           shift: "A",
           delayreason: "نبود قطعه یدکی",
           failurereason: "اضافه بار",
-          failurereasondescription: "",
-          suggestionfailure: "",
-        });
+        }));
         setTimeout(() => {
           setGeneratedFormCode("");
         }, 3000);
@@ -272,6 +270,24 @@ function TechnicianSubmit() {
                           disabled
                           required
                         />
+                      </div>
+                      <div className="input-field">
+                        <label
+                          htmlFor="jobstatus"
+                          className="flex justify-center items-center"
+                        >
+                          وضعیت کار
+                        </label>
+                        <select
+                          name="jobstatus"
+                          id="jobstatus"
+                          value={values.jobstatus}
+                          onChange={handleInputChange}
+                        >
+                          <option value="بله">کار انجام شد</option>
+                          <option value="در حال انجام">در حال انجام</option>
+                          <option value="خیر">کار انجام نشد</option>
+                        </select>
                       </div>
                       <div className="input-field">
                         <label

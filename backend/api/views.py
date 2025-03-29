@@ -13,11 +13,11 @@ from rest_framework.authentication import TokenAuthentication
 from .utils import generate_formcode
 from .serializers import (
     SubmitFormSerializer,
-    TechnicianPersonelSerializer,
+    PersonelSerializer,
     TechnicianSubmitSerializer,
     AghlamSerializer,
 )
-from .models import SubmitForm, TechnicianSubmit, TechnicianPersonel, Aghlam
+from .models import SubmitForm, TechnicianSubmit, Personel, Aghlam
 
 SECTION_CODES = {
     # MDF-2
@@ -175,103 +175,79 @@ def FormListCreate(request):
 @permission_classes([AllowAny])
 def TechnicianFormSubmit(request):
     if request.method == "POST":
-        # Extract data from the request
-        formcode = request.data.get("formcode")
-        failurepart = request.data.get("failurepart", "")
-        failuretime_str = request.data.get("failuretime", "")
-        sparetime_str = request.data.get("sparetime", "")
-        startfailuretime_str = request.data.get("startfailuretime", "")
-        problemdescription = request.data.get("problemdescription", "")
-        jobstatus = request.data.get("jobstatus", "در حال انجام")
-        status = request.data.get("status", "")
-
-        # Convert timestamps to timezone-aware datetime objects
-        def parse_datetime(dt_str):
-            try:
-                return (
-                    make_aware(datetime.datetime.fromisoformat(dt_str))
-                    if dt_str
-                    else None
-                )
-            except ValueError:
-                return None
-
-        failuretime = parse_datetime(failuretime_str)
-        sparetime = parse_datetime(sparetime_str)
-        startfailuretime = parse_datetime(startfailuretime_str)
-
-        # Validate required fields
-        if not failurepart or not failuretime or not sparetime:
-            return Response(
-                {"status": "error", "message": "Required fields are missing"},
-                status=400,
-            )
-
-        # Create and save form entry
         try:
-            form = SubmitForm.objects.get(formcode=formcode)
-            if status == "completed":
-                form.technician_submitted = True
-                form.technician_status = "reviewed"
-            elif status == "not_possible":
-                form.technician_status = "returned"
+            # Extract data from request
+            formcode = request.data.get("formcode")
+            failurepart = request.data.get("failurepart", "")
+            failuretime_str = request.data.get("failuretime", "")
+            sparetime_str = request.data.get("sparetime", "")
+            startfailuretime_str = request.data.get("startfailuretime", "")
+            problemdescription = request.data.get("problemdescription", "")
+            jobstatus = request.data.get(
+                "jobstatus", "در حال انجام"
+            ).strip()  # Ensure jobstatus is not empty
 
-            form.save()
+            # Convert timestamps to timezone-aware datetime objects
+            def parse_datetime(dt_str):
+                try:
+                    return (
+                        make_aware(datetime.datetime.fromisoformat(dt_str))
+                        if dt_str
+                        else None
+                    )
+                except ValueError:
+                    return None
 
-            TechnicianSubmit.objects.create(
+            failuretime = parse_datetime(failuretime_str)
+            sparetime = parse_datetime(sparetime_str)
+            startfailuretime = parse_datetime(startfailuretime_str)
+
+            # Validate required fields
+            if not formcode or not failurepart or not failuretime or not sparetime:
+                return Response(
+                    {"status": "error", "message": "Required fields are missing"},
+                    status=400,
+                )
+
+            # Retrieve SubmitForm instance
+            try:
+                form = SubmitForm.objects.get(formcode=formcode)
+            except SubmitForm.DoesNotExist:
+                return Response(
+                    {"status": "error", "message": "Form not found"}, status=404
+                )
+
+            # Ensure jobstatus is valid
+            valid_statuses = ["بله", "خیر", "در حال انجام"]
+            if jobstatus not in valid_statuses:
+                return Response(
+                    {"status": "error", "message": "Invalid jobstatus value"},
+                    status=400,
+                )
+
+            # Create and save TechnicianSubmit instance
+            submission = TechnicianSubmit.objects.create(
                 formcode=formcode,
                 failurepart=failurepart,
                 failuretime=failuretime,
                 sparetime=sparetime,
                 startfailuretime=startfailuretime,
                 problemdescription=problemdescription,
-                jobstatus=jobstatus,
+                jobstatus=jobstatus,  # Save jobstatus correctly
                 submit_form=form,
             )
+
             return Response(
                 {
                     "status": "success",
                     "message": "Form submitted successfully",
                     "technician_status": form.technician_status,
+                    "jobstatus": submission.jobstatus,  # Return saved jobstatus
                 }
             )
 
-        except SubmitForm.DoesNotExist:
-            return Response(
-                {"status": "error", "message": "Form not found"}, status=404
-            )
         except Exception as e:
             return Response({"status": "error", "message": str(e)}, status=500)
-
-    elif request.method == "GET":
-        # Retrieve technician submissions and add an activity field
-        submissions = TechnicianSubmit.objects.all()
-
-        # Format the response data
-        updated_submissions = []
-        for form in submissions:
-            updated_submissions.append(
-                {
-                    "formcode": form.formcode,
-                    "failurepart": form.failurepart,
-                    "failuretime": form.failuretime,
-                    "sparetime": form.sparetime,
-                    "startfailuretime": form.startfailuretime,
-                    "problemdescription": form.problemdescription,
-                    "jobstatus": form.jobstatus,
-                    "activity": (
-                        "کار انجام شد"
-                        if form.jobstatus == "بله"
-                        else (
-                            "کار انجام نشد"
-                            if form.jobstatus == "خیر"
-                            else "در حال انجام"
-                        )
-                    ),
-                }
-            )
-
-        return Response({"status": "success", "data": updated_submissions})
 
 
 @api_view(["POST", "GET"])
@@ -295,7 +271,7 @@ def AghlamSubmit(request):
             )
         # Create and save form entry
         try:
-            Aghlam.objects.create(
+            aghlamform = Aghlam.objects.create(
                 formcode=formcode,
                 kalaname=kalaname,
                 countkala=countkala,
@@ -361,7 +337,7 @@ def PersonelSubmit(request):
 
         # Create and save form entry
         try:
-            TechnicianPersonel.objects.create(
+            personelform = Personel.objects.create(
                 formcode=formcode,
                 personel=personel,
                 personelnumber=personelnumber,
@@ -387,7 +363,7 @@ def PersonelSubmit(request):
             return Response({"status": "error", "message": str(e)}, status=500)
 
     elif request.method == "GET":
-        submissions = TechnicianPersonel.objects.all().values()
+        submissions = Personel.objects.all().values()
         return Response({"status": "success", "data": list(submissions)})
 
 
@@ -413,6 +389,26 @@ class TechnicianFormListView(APIView):
         return Response(serializer.data)
 
 
+class AghlamsFormListView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        # Use the imported Aghlam model, not AghlamSubmit
+        aghlamform = Aghlam.objects.all()
+        serializer = AghlamSerializer(aghlamform, many=True)
+        return Response(serializer.data)
+
+
+class PersonelsFormListView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        # Use the imported Personel model, not PersonelSubmit
+        personelforms = Personel.objects.all()
+        serializer = PersonelSerializer(personelforms, many=True)
+        return Response(serializer.data)
+
+
 @api_view(["DELETE"])
 @permission_classes([AllowAny])
 def delete_form(request, pk):
@@ -423,9 +419,7 @@ def delete_form(request, pk):
         logger.info(f"Deleting SubmitForm ID: {pk}")
 
         # Delete related records explicitly (not required if CASCADE is set, but ensures cleanup)
-        deleted_technicians = TechnicianPersonel.objects.filter(
-            submit_form=form
-        ).delete()
+        deleted_technicians = Personel.objects.filter(submit_form=form).delete()
         deleted_aghlams = Aghlam.objects.filter(submit_form=form).delete()
         deleted_technician_submits = TechnicianSubmit.objects.filter(
             submit_form=form

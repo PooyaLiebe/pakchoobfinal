@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import LoginUser, SubmitForm, TechnicianSubmit, TechnicianPersonel, Aghlam
+from .models import LoginUser, SubmitForm, TechnicianSubmit, Personel, Aghlam
 
 
 # Register your models here.
@@ -49,7 +49,6 @@ class AdminAghlam(admin.ModelAdmin):
         "codekala",
         "flamekala",
         "shopkala",
-        "submit_form",
     ]
 
 
@@ -69,7 +68,6 @@ class AdminPersonel(admin.ModelAdmin):
         "failurereason",
         "failurereasondescription",
         "suggestionfailure",
-        "submit_form",
     ]
 
 
@@ -82,4 +80,4 @@ admin.site.register(LoginUser, LoginUserAdmin)
 admin.site.register(Aghlam, AdminAghlam)
 admin.site.register(SubmitForm, AdminSubmitForm)
 admin.site.register(TechnicianSubmit, AdminTechnicianForm)
-admin.site.register(TechnicianPersonel, AdminPersonel)
+admin.site.register(Personel, AdminPersonel)

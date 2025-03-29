@@ -11,7 +11,9 @@ from .views import (
     SubmitFormDetailByCodeView,
     TechnicianFormListView,
     AghlamSubmit,
+    AghlamsFormListView,
     PersonelSubmit,
+    PersonelsFormListView,
 )
 
 urlpatterns = [
@@ -34,7 +36,18 @@ urlpatterns = [
     ),
     # Technician Submit Endpoints
     path("api/techniciansubmit/", TechnicianFormSubmit, name="techniciansubmit"),
-    path('api/techniciansubmit/list/',TechnicianFormListView.as_view(), name='techniciansubmit-list'),
+    path(
+        "api/techniciansubmit/list/",
+        TechnicianFormListView.as_view(),
+        name="techniciansubmit-list",
+    ),
+    path(
+        "api/techniciansubmit/delete/<int:pk>/",
+        FormDelete.as_view(),
+        name="delete_form",
+    ),
     path("api/aghlams/", AghlamSubmit, name="aghlams"),
+    path("api/aghlams/list/", AghlamsFormListView.as_view(), name="aghlams-list"),
     path("api/personels/", PersonelSubmit, name="personels"),
+    path("api/personels/list/", PersonelsFormListView.as_view(), name="personels-list"),
 ]

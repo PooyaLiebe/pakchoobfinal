@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import SubmitForm, TechnicianSubmit, TechnicianPersonel, Aghlam
+from .models import SubmitForm, TechnicianSubmit, Personel, Aghlam
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -20,20 +20,49 @@ class TechnicianSubmitSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TechnicianSubmit
-        fields = "__all__"
+        fields = [
+            "id",
+            "submit_form",
+            "formcode",
+            "failurepart",
+            "failuretime",
+            "sparetime",
+            "startfailuretime",
+            "problemdescription",
+            "jobstatus",  # Ensure jobstatus is included
+        ]
 
 
-class TechnicianPersonelSerializer(serializers.ModelSerializer):
-    submit_form = SubmitFormSerializer(read_only=True)
+class PersonelSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = TechnicianPersonel
-        fields = "__all__"
+        model = Personel
+        fields = [
+            "personel",
+            "personelnumber",
+            "datesubmit",
+            "specialjob",
+            "starttimerepair",
+            "endtimerepair",
+            "repairstatus",
+            "unitrepair",
+            "shift",
+            "delayreason",
+            "failurereason",
+            "failurereasondescription",
+            "suggestionfailure",
+        ]
 
 
 class AghlamSerializer(serializers.ModelSerializer):
-    submit_form = SubmitFormSerializer(read_only=True)
 
     class Meta:
         model = Aghlam
-        fields = "__all__"
+        fields = [
+            "kalaname",
+            "countkala",
+            "vahedkala",
+            "codekala",
+            "flamekala",
+            "shopkala",
+        ]

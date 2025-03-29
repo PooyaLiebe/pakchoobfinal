@@ -14,7 +14,7 @@ function TechnicianSubmit() {
     sparetime: "",
     startfailuretime: "",
     problemdescription: "",
-    jobstatus: "بله",
+    jobstatus: "در حال انجام",
   });
   const { formcode } = useParams();
   const [show, setShow] = useState(false);
@@ -96,6 +96,7 @@ function TechnicianSubmit() {
         sparetime: formatDateTime(values.sparetime),
         startfailuretime: formatDateTime(values.startfailuretime),
         problemdescription: values.problemdescription,
+        jobstatus: values.jobstatus,
       });
 
       if (response.data.status === "success") {

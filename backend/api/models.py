@@ -75,7 +75,7 @@ class TechnicianSubmit(models.Model):
             ("خیر", "کار انجام نشد"),
             ("در حال انجام", "در حال انجام"),
         ],
-        default="در حال انجام",
+        default="کار انجام شد",
     )
     submit_form = models.ForeignKey(
         SubmitForm,
@@ -97,19 +97,12 @@ class Aghlam(models.Model):
     codekala = models.CharField(max_length=50)
     flamekala = models.CharField(max_length=50)
     shopkala = models.CharField(max_length=50)
-    submit_form = models.ForeignKey(
-        SubmitForm,
-        on_delete=models.CASCADE,
-        related_name="aghlams",
-        null=True,
-        blank=True,
-    )
 
     def __str__(self):
         return f"Aghlam Submit {self.formcode}"
 
 
-class TechnicianPersonel(models.Model):
+class Personel(models.Model):
     formcode = models.CharField(max_length=100, null=True)
     personel = models.CharField(max_length=50)
     personelnumber = models.CharField(max_length=50)
@@ -124,13 +117,6 @@ class TechnicianPersonel(models.Model):
     failurereason = models.CharField(max_length=50)
     failurereasondescription = models.CharField(max_length=50)
     suggestionfailure = models.CharField(max_length=50)
-    submit_form = models.ForeignKey(
-        SubmitForm,
-        on_delete=models.CASCADE,
-        related_name="technician_personels",
-        null=True,
-        blank=True,
-    )
 
     def __str__(self):
         return f"Personel Submit {self.formcode}"

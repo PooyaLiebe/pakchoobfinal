@@ -12,6 +12,7 @@ const FormTable = () => {
   const [technicianform, setTechnicianForm] = useState([]);
   const [aghlams, setAghlams] = useState([]); // Assuming aghlams data
   const [personels, setPersonels] = useState([]); // Assuming personels data
+  const [mergedTechnicianForms, setMergedTechnicianForms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -80,23 +81,31 @@ const FormTable = () => {
     }
     return submit; // If no match, just return the original submit form
   });
+  // Set the merged data to state
+  useEffect(() => {
+    if (
+      technicianform.length > 0 &&
+      aghlams.length > 0 &&
+      personels.length > 0
+    ) {
+      const mergedData = technicianform.map((techForm) => {
+        const aghlamMatches = aghlams.filter(
+          (aghlam) => aghlam.formcode === techForm.formcode
+        );
+        const personelMatches = personels.filter(
+          (personel) => personel.formcode === techForm.formcode // Or personelcode
+        );
 
-  const mergedTechnicianForms = technicianform.map((techForm) => {
-    // Find matching aghlams and personels data based on formcode
-    const aghlamData = aghlams.find(
-      (aghlam) => aghlam.formcode === techForm.formcode
-    );
-    const personelData = personels.find(
-      (personel) => personel.formcode === techForm.formcode
-    );
+        return {
+          ...techForm,
+          aghlams: aghlamMatches.length > 0 ? aghlamMatches : [],
+          personels: personelMatches.length > 0 ? personelMatches : [],
+        };
+      });
 
-    // Merge the data if matching entries exist
-    return {
-      ...techForm,
-      aghlam: aghlamData || null, // Add aghlams data if available
-      personel: personelData || null, // Add personels data if available
-    };
-  });
+      setMergedTechnicianForms(mergedData);
+    }
+  }, [technicianform, aghlams, personels]);
 
   const filteredForms = mergedSubmitForms.filter((form) => {
     if (userType === "mechanic") {
@@ -129,6 +138,21 @@ const FormTable = () => {
       alert("Failed to delete the form");
     }
   };
+  useEffect(() => {
+    console.log(
+      "Technician Forms Formcodes:",
+      technicianform.map((form) => form.formcode)
+    );
+    console.log(
+      "Aghlams Formcodes:",
+      aghlams.map((aghlam) => aghlam.formcode)
+    );
+    console.log(
+      "Personels Formcodes:",
+      personels.map((personel) => personel.formcode)
+    );
+  }, [technicianform, aghlams, personels]);
+  console.log("Personels Data:", personels);
   return (
     <motion.div
       className="bg-gray-800 bg-opacity-50 backdrop-blur-md shadow-lg p-6 border border-gray-700 mb-8 rounded"
@@ -421,65 +445,86 @@ const FormTable = () => {
                 <td className="px-6 py-4 text-gray-300">
                   {form.problemdescription || "N/A"}
                 </td>
-                {/* <td className="px-6 py-4 text-gray-300">
-                  {form.jobstatus || "N/A"}
-                </td> */}
                 <td className="px-6 py-4 text-gray-300">
-                  {form.kalaname || "N/A"}
+                  {form.aghlams.length > 0 ? form.aghlams[0].kalaname : "N/A"}
                 </td>
                 <td className="px-6 py-4 text-gray-300">
-                  {form.countkala || "N/A"}
+                  {form.aghlams.length > 0 ? form.aghlams[0].countkala : "N/A"}
                 </td>
                 <td className="px-6 py-4 text-gray-300">
-                  {form.vahedkala || "N/A"}
+                  {form.aghlams.length > 0 ? form.aghlams[0].vahedkala : "N/A"}
                 </td>
                 <td className="px-6 py-4 text-gray-300">
-                  {form.codekala || "N/A"}
+                  {form.aghlams.length > 0 ? form.aghlams[0].codekala : "N/A"}
                 </td>
                 <td className="px-6 py-4 text-gray-300">
-                  {form.flamekala || "N/A"}
+                  {form.aghlams.length > 0 ? form.aghlams[0].flamekala : "N/A"}
                 </td>
                 <td className="px-6 py-4 text-gray-300">
-                  {form.shopkala || "N/A"}
+                  {form.aghlams.length > 0 ? form.aghlams[0].shopkala : "N/A"}
                 </td>
                 <td className="px-6 py-4 text-gray-300">
-                  {form.personel || "N/A"}
+                  {form.personels.length > 0
+                    ? form.personels[0].personel
+                    : "N/A"}
                 </td>
                 <td className="px-6 py-4 text-gray-300">
-                  {form.personelnumber || "N/A"}
+                  {form.personels.length > 0
+                    ? form.personels[0].personelnumber
+                    : "N/A"}
                 </td>
                 <td className="px-6 py-4 text-gray-300">
-                  {form.datesubmit || "N/A"}
+                  {form.personels.length > 0
+                    ? form.personels[0].datesubmit
+                    : "N/A"}
                 </td>
                 <td className="px-6 py-4 text-gray-300">
-                  {form.specialjob || "N/A"}
+                  {form.personels.length > 0
+                    ? form.personels[0].specialjob
+                    : "N/A"}
                 </td>
                 <td className="px-6 py-4 text-gray-300">
-                  {form.starttimerepair || "N/A"}
+                  {form.personels.length > 0
+                    ? form.personels[0].starttimerepair
+                    : "N/A"}
                 </td>
                 <td className="px-6 py-4 text-gray-300">
-                  {form.endtimerepair || "N/A"}
+                  {form.personels.length > 0
+                    ? form.personels[0].endtimerepair
+                    : "N/A"}
                 </td>
                 <td className="px-6 py-4 text-gray-300">
-                  {form.repairstatus || "N/A"}
+                  {form.personels.length > 0
+                    ? form.personels[0].repairstatus
+                    : "N/A"}
                 </td>
                 <td className="px-6 py-4 text-gray-300">
-                  {form.unitrepair || "N/A"}
+                  {form.personels.length > 0
+                    ? form.personels[0].unitrepair
+                    : "N/A"}
                 </td>
                 <td className="px-6 py-4 text-gray-300">
-                  {form.shift || "N/A"}
+                  {form.personels.length > 0 ? form.personels[0].shift : "N/A"}
                 </td>
                 <td className="px-6 py-4 text-gray-300">
-                  {form.delayreason || "N/A"}
+                  {form.personels.length > 0
+                    ? form.personels[0].delayreason
+                    : "N/A"}
                 </td>
                 <td className="px-6 py-4 text-gray-300">
-                  {form.failurereason || "N/A"}
+                  {form.personels.length > 0
+                    ? form.personels[0].failurereason
+                    : "N/A"}
                 </td>
                 <td className="px-6 py-4 text-gray-300">
-                  {form.failurereasondescription || "N/A"}
+                  {form.personels.length > 0
+                    ? form.personels[0].failurereasondescription
+                    : "N/A"}
                 </td>
                 <td className="px-6 py-4 text-gray-300">
-                  {form.suggestionfailure || "N/A"}
+                  {form.personels.length > 0
+                    ? form.personels[0].suggestionfailure
+                    : "N/A"}
                 </td>
                 <td className="px-10 py-4 whitespace-nowrap text-sm text-gray-300">
                   {/* <Tooltip title={"Edit"} placement="top">

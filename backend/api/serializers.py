@@ -34,10 +34,12 @@ class TechnicianSubmitSerializer(serializers.ModelSerializer):
 
 
 class PersonelSerializer(serializers.ModelSerializer):
+    submit_form = SubmitFormSerializer(read_only=True)
 
     class Meta:
         model = Personel
         fields = [
+            "formcode",
             "personel",
             "personelnumber",
             "datesubmit",
@@ -51,6 +53,7 @@ class PersonelSerializer(serializers.ModelSerializer):
             "failurereason",
             "failurereasondescription",
             "suggestionfailure",
+            "submit_form",
         ]
 
 
@@ -59,6 +62,7 @@ class AghlamSerializer(serializers.ModelSerializer):
     class Meta:
         model = Aghlam
         fields = [
+            "formcode",
             "kalaname",
             "countkala",
             "vahedkala",

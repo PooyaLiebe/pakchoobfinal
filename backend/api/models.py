@@ -117,6 +117,13 @@ class Personel(models.Model):
     failurereason = models.CharField(max_length=50)
     failurereasondescription = models.CharField(max_length=50)
     suggestionfailure = models.CharField(max_length=50)
+    submit_form = models.ForeignKey(
+        SubmitForm,
+        on_delete=models.CASCADE,
+        related_name="personel",
+        null=True,
+        blank=True,
+    )
 
     def __str__(self):
         return f"Personel Submit {self.formcode}"

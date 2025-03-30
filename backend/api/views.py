@@ -393,9 +393,9 @@ class AghlamsFormListView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
-        # Use the imported Aghlam model, not AghlamSubmit
         aghlamform = Aghlam.objects.all()
         serializer = AghlamSerializer(aghlamform, many=True)
+        print("Aghlam API Response:", serializer.data)  # Log the API response to check
         return Response(serializer.data)
 
 
@@ -403,9 +403,11 @@ class PersonelsFormListView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
-        # Use the imported Personel model, not PersonelSubmit
         personelforms = Personel.objects.all()
         serializer = PersonelSerializer(personelforms, many=True)
+        print(
+            "Personel API Response:", serializer.data
+        )  # Log the API response to check
         return Response(serializer.data)
 
 

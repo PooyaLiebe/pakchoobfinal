@@ -179,35 +179,35 @@ def TechnicianFormSubmit(request):
             # Extract data from request
             formcode = request.data.get("formcode")
             failurepart = request.data.get("failurepart", "")
-            failuretime_str = request.data.get("failuretime", "")
-            sparetime_str = request.data.get("sparetime", "")
-            startfailuretime_str = request.data.get("startfailuretime", "")
+            failuretime = request.data.get("failuretime", "")
+            sparetime = request.data.get("sparetime", "")
+            startfailuretime = request.data.get("startfailuretime", "")
             problemdescription = request.data.get("problemdescription", "")
             jobstatus = request.data.get(
                 "jobstatus", "در حال انجام"
             ).strip()  # Ensure jobstatus is not empty
 
-            # Convert timestamps to timezone-aware datetime objects
-            def parse_datetime(dt_str):
-                try:
-                    return (
-                        make_aware(datetime.datetime.fromisoformat(dt_str))
-                        if dt_str
-                        else None
-                    )
-                except ValueError:
-                    return None
+            # # Convert timestamps to timezone-aware datetime objects
+            # def parse_datetime(dt_str):
+            #     try:
+            #         return (
+            #             make_aware(datetime.datetime.fromisoformat(dt_str))
+            #             if dt_str
+            #             else None
+            #         )
+            #     except ValueError:
+            #         return None
 
-            failuretime = parse_datetime(failuretime_str)
-            sparetime = parse_datetime(sparetime_str)
-            startfailuretime = parse_datetime(startfailuretime_str)
+            # failuretime = parse_datetime(failuretime_str)
+            # sparetime = parse_datetime(sparetime_str)
+            # startfailuretime = parse_datetime(startfailuretime_str)
 
-            # Validate required fields
-            if not formcode or not failurepart or not failuretime or not sparetime:
-                return Response(
-                    {"status": "error", "message": "Required fields are missing"},
-                    status=400,
-                )
+            # # Validate required fields
+            # if not formcode or not failurepart or not failuretime or not sparetime:
+            #     return Response(
+            #         {"status": "error", "message": "Required fields are missing"},
+            #         status=400,
+            #     )
 
             # Retrieve SubmitForm instance
             try:

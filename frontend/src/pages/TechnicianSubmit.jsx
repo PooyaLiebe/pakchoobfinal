@@ -316,7 +316,7 @@ function TechnicianSubmit() {
                           مدت زمان تشخیص عیب
                         </label>
                         <input
-                          type="datetime-local"
+                          type="time"
                           name="failuretime"
                           className="outline-none text-14 w-full font-normal flex justify-center text-center  items-center rounded-md shadow-lg border-2 p-2 h-11"
                           id="failuretime"
@@ -333,7 +333,7 @@ function TechnicianSubmit() {
                           مدت زمان تهیه لوازم یدکی
                         </label>
                         <input
-                          type="datetime-local"
+                          type="time"
                           name="sparetime"
                           id="sparetime"
                           className="outline-none text-14 w-full font-normal flex justify-center text-center  items-center rounded-md shadow-lg border-2 p-2 h-11"
@@ -350,7 +350,7 @@ function TechnicianSubmit() {
                           میزان ساعت کار تجهیز در زمان شروع به رفع عیب
                         </label>
                         <input
-                          type="datetime-local"
+                          type="time"
                           name="startfailuretime"
                           id="startfailuretime"
                           className="outline-none text-14 w-full font-normal flex justify-center text-center  items-center rounded-md shadow-lg border-2 h-11 "

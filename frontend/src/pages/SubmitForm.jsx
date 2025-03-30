@@ -333,15 +333,15 @@ const SubmitForm = () => {
                       <div className="input-field">
                         <label
                           htmlFor="failuretime"
-                          className="flex justify-center items-center"
+                          className="flex justify-center text-center"
                         >
                           میزان ساعت کار تجهیز در زمان بروز عیب
                         </label>
                         <input
-                          type="text"
+                          type="time"
                           name="failuretime"
                           id="failuretime"
-                          className="text-center"
+                          className="flex justify-center text-center"
                           placeholder="میزان ساعت کار را وارد کنید"
                           value={values.failuretime}
                           onChange={handleInputChange}

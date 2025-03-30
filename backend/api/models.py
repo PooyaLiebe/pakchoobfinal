@@ -32,7 +32,7 @@ class SubmitForm(models.Model):
     machineplacecode = models.CharField(max_length=100)
     worktype = models.CharField(max_length=20)
     stoptime = models.DateTimeField(null=True)
-    failuretime = models.CharField(max_length=20, null=True)
+    failuretime = models.TimeField(null=True)
     operatorname = models.CharField(max_length=100, null=True)
     productionstop = models.CharField(max_length=100, null=True)
     section = models.CharField(max_length=100, null=True)
@@ -64,9 +64,9 @@ class SubmitForm(models.Model):
 class TechnicianSubmit(models.Model):
     formcode = models.CharField(max_length=100, null=True)
     failurepart = models.CharField(max_length=50)
-    failuretime = models.DateTimeField(null=True)
-    sparetime = models.DateTimeField(null=True)
-    startfailuretime = models.DateTimeField(null=True)
+    failuretime = models.TimeField(null=True)
+    sparetime = models.TimeField(null=True)
+    startfailuretime = models.TimeField(null=True)
     problemdescription = models.TextField(blank=True, null=True)
     jobstatus = models.CharField(
         max_length=20,

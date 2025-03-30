@@ -44,6 +44,12 @@ const Sidebar = () => {
           color: "#EC4899",
           href: "/submitform",
         },
+        {
+          name: "Register User",
+          icon: BookOpenCheck,
+          color: "#EC4899",
+          href: "/register",
+        },
 
         {
           name: "Forms",

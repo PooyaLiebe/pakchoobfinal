@@ -50,7 +50,6 @@ const Sidebar = () => {
           color: "#EC4899",
           href: "/register",
         },
-
         {
           name: "Forms",
           icon: ClipboardList,

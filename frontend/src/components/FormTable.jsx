@@ -13,12 +13,6 @@ const FormTable = () => {
   const [aghlams, setAghlams] = useState([]); // Assuming aghlams data
   const [personels, setPersonels] = useState([]); // Assuming personels data
   const [mergedTechnicianForms, setMergedTechnicianForms] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalInput1, setModalInput1] = useState("");
-  const [modalInput2, setModalInput2] = useState("");
-  const [modalInput3, setModalInput3] = useState("");
   const [userType, setUserType] = useState("");
 
   // Assuming jobstatus is a field in the technicianform that we want to merge with submitform

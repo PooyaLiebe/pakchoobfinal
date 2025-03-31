@@ -216,7 +216,6 @@ function TechnicianSubmit() {
       });
 
       if (response.data.status === "success") {
-        alert("فرم ثبت شد");
         setTech((prevTech) => ({
           ...prevTech, // Keep all previous values
           formcode: formcode, // Reset formcode
@@ -378,13 +377,6 @@ function TechnicianSubmit() {
                       </div>
                     </div>
                     <div className="flex justify-center text-center aling-center">
-                      <button
-                        type="button"
-                        className="nextBtnCancel"
-                        onClick={() => navigate("/forms")}
-                      >
-                        لفو فرم
-                      </button>
                       <button
                         type="button"
                         className="nextBtn"

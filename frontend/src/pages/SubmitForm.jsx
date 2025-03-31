@@ -32,7 +32,7 @@ const SubmitForm = () => {
   const [values, setValues] = useState({
     formcode: "",
     problemdate: "",
-    phase: "",
+    phase: "01",
     productionstop: "خیر",
     section: "01",
     machinename: "",

@@ -417,9 +417,9 @@ const FormTable = () => {
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                 Suggestion Failure
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+              {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                 Actions
-              </th>
+              </th> */}
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-700">
@@ -429,12 +429,10 @@ const FormTable = () => {
                 <td className="px-6 py-4 text-gray-300">
                   {form.failurepart || "N/A"}
                 </td>
-                <td className="px-6 py-4 text-gray-300">
-                  {new Date(form.failuretime).toLocaleString()}
-                </td>
+                <td className="px-6 py-4 text-gray-300">{form.failuretime}</td>
                 <td className="px-6 py-4 text-gray-300">{form.sparetime}</td>
                 <td className="px-6 py-4 text-gray-300">
-                  {new Date(form.startfailuretime).toLocaleString()}
+                  {form.startfailuretime}
                 </td>
                 <td className="px-6 py-4 text-gray-300">
                   {form.problemdescription || "N/A"}
@@ -520,13 +518,13 @@ const FormTable = () => {
                     ? form.personels[0].suggestionfailure
                     : "N/A"}
                 </td>
-                <td className="px-10 py-4 whitespace-nowrap text-sm text-gray-300">
-                  {/* <Tooltip title={"Edit"} placement="top">
+                {/* <td className="px-10 py-4 whitespace-nowrap text-sm text-gray-300">
+                  <Tooltip title={"Edit"} placement="top">
                     {" "}
                     <button className="text-indigo-400 hover:text-indigo-300 mr-2 cursor-pointer">
                       <Edit size={18} />
                     </button>
-                  </Tooltip> */}
+                  </Tooltip>
                   <Tooltip title={"Delete"} placement="top">
                     <button
                       onClick={() => handleDelete(form.id)}
@@ -542,7 +540,7 @@ const FormTable = () => {
                       </button>
                     </Link>
                   </Tooltip>
-                </td>
+                </td> */}
               </motion.tr>
             ))}
           </tbody>

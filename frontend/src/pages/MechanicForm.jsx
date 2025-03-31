@@ -5,6 +5,7 @@ import { Edit, Search, Send, Trash } from "lucide-react";
 import { Tooltip } from "@mui/material";
 import Header from "../components/Common/Header";
 import api from "../api";
+import { Link } from "react-router-dom";
 
 const MechanicForm = () => {
   const [submitform, setSubmitform] = useState([]);
@@ -246,12 +247,11 @@ const MechanicForm = () => {
                         </button>
                       </Tooltip>
                       <Tooltip title={"Send"} placement="top">
-                        <button
-                          onClick={handleSend}
-                          className="text-pink-500 hover:text-pink-300 cursor-pointer"
-                        >
-                          <Send size={18} />
-                        </button>
+                        <Link to={`/techniciansubmit/${form.formcode}`}>
+                          <button className="text-pink-500 hover:text-pink-300 cursor-pointer">
+                            <Send size={18} />
+                          </button>
+                        </Link>
                       </Tooltip>
                     </td>
                   </motion.tr>

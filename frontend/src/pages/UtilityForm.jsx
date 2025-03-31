@@ -5,6 +5,7 @@ import { Edit, Search, Send, Trash } from "lucide-react";
 import { Tooltip } from "@mui/material";
 import Header from "../components/Common/Header";
 import api from "../api";
+import { Link } from "react-router-dom";
 
 const UtilityForm = () => {
   const [submitform, setSubmitform] = useState([]);
@@ -246,12 +247,11 @@ const UtilityForm = () => {
                         </button>
                       </Tooltip>
                       <Tooltip title={"Send"} placement="top">
-                        <button
-                          onClick={handleSend}
-                          className="text-pink-500 hover:text-pink-300 cursor-pointer"
-                        >
-                          <Send size={18} />
-                        </button>
+                        <Link to={`/techniciansubmit/${form.formcode}`}>
+                          <button className="text-pink-500 hover:text-pink-300 cursor-pointer">
+                            <Send size={18} />
+                          </button>
+                        </Link>
                       </Tooltip>
                     </td>
                   </motion.tr>
@@ -259,56 +259,6 @@ const UtilityForm = () => {
               </tbody>
             </table>
           </div>
-          {isModalOpen && (
-            <div className="fixed inset-0 bg-gray-800 bg-opacity-50 overflow-y-auto h-full w-full">
-              <h3 className="flex justify-center mt-2 text-2xl font-mono">
-                ارسال
-              </h3>
-              <div className="flex justify-center mt-7 font-mono">
-                <select
-                  name="sendworktype"
-                  className="text-center"
-                  id="sendworktype"
-                  onChange={(e) =>
-                    setModalInput1({
-                      ...modalInput1,
-                      sendworktype: e.target.value,
-                    })
-                  }
-                  required
-                >
-                  <option className="bg-gray-800" value="mechanic">
-                    Mechanic
-                  </option>
-                  <option className="bg-gray-800" value="electric">
-                    Electric
-                  </option>
-                  <option className="bg-gray-800" value="production">
-                    Production
-                  </option>
-                  <option className="bg-gray-800" value="utility">
-                    Utility
-                  </option>
-                </select>
-              </div>
-              <div className="mt-5 flex justify-center">
-                <button
-                  className="cursor-pointer px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 focus:outline-none focus:shadow-outline mr-2"
-                  onClick={handleSendModal}
-                >
-                  ارسال
-                </button>
-                <button
-                  className="cursor-pointer px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:shadow-outline"
-                  onClick={() => {
-                    closeModal();
-                  }}
-                >
-                  لغو
-                </button>
-              </div>
-            </div>
-          )}
         </motion.div>
       </main>
     </div>

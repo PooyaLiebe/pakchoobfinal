@@ -218,7 +218,7 @@ function TechnicianSubmit() {
       if (response.data.status === "success") {
         setTech((prevTech) => ({
           ...prevTech, // Keep all previous values
-          formcode: formcode, // Reset formcode
+          formcode: formcode, 
           personel: "", // Clear personel
           personelnumber: "", // Clear personelnumber
           specialjob: "کارشناس",

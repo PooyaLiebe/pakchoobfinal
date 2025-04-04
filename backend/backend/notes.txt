@@ -1,0 +1,28 @@
+from django.contrib import admin
+from django.conf import settings
+from django.urls import path, include, re_path
+from django.views.generic import TemplateView
+from django.views.static import serve
+
+from api.views import register_view, login_view
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+
+urlpatterns = [
+    path("admin/", admin.site.urls),
+
+    # API Endpoints
+    path("api/login/", login_view, name="login"),
+    path("api/token/", TokenObtainPairView.as_view(), name="get_token"),
+    path("api/token/refresh/", TokenRefreshView.as_view(), name="refresh"),
+    path("api/register/", register_view, name="register"),
+    path("api/", include("api.urls")),  # Only include API URLs once
+
+    # Serve React Frontend
+    path("", TemplateView.as_view(template_name="index.html"), name="home"),
+
+    # Serve React static files (CSS, JS, Images)
+    re_path(r"^assets/(?P<path>.*)$", serve, {"document_root": "/home/planning/public_html/frontend/assets/"}),
+
+    # Serve React for all frontend routes (except API)
+    re_path(r"^(?!api/).*", TemplateView.as_view(template_name="index.html")),
+]

@@ -7,7 +7,8 @@ load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
+# # React Frontend Directory (update this if necessary)
+# REACT_APP_DIR = "/home/planning/public_html/frontend/"
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
@@ -15,24 +16,25 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-$d5noih4@jy3%ihlf7y)xa$%kk$4wyar9wg@5g9dcta-%x-t)y"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
     "planningmaintenance.ir",
+    "http://127.0.0.1:3001",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     "https://planningmaintenance.ir",
     "http://localhost:5174",
-    "http://127.0.0.1:3000",
+    "http://127.0.0.1:3001",
 ]
 
 CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5174",
-    "http://127.0.0.1:3000",
+    "http://127.0.0.1:3001",
 ]
 
 REST_FRAMEWORK = {
@@ -87,7 +89,6 @@ ROOT_URLCONF = "backend.urls"
 
 TEMPLATES = [
     {
-        "DIRS": [os.path.join(BASE_DIR, "frontend/build")],
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [],
         "APP_DIRS": True,
@@ -101,7 +102,6 @@ TEMPLATES = [
         },
     },
 ]
-
 
 WSGI_APPLICATION = "backend.wsgi.application"
 
@@ -149,13 +149,16 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.2/howto/static-files/
+# https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = "static/"
-# STATIC_ROOT = "/home/planning/public_html/static"
-# Default primary key field type
-# https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
+
+# # Add React template directory
+# TEMPLATES[0]["DIRS"] = [os.path.join(REACT_APP_DIR)]
+
+# Default primary key field type
+# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 CORS_ALLOW_ALL_ORIGINS = True

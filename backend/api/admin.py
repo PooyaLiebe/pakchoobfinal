@@ -1,5 +1,11 @@
 from django.contrib import admin
-from .models import LoginUser, SubmitForm, TechnicianSubmit, Personel, Aghlam
+from .models import (
+    LoginUser,
+    SubmitForm,
+    TechnicianSubmit,
+    Personel,
+    Aghlam,
+)
 
 
 # Register your models here.
@@ -68,6 +74,8 @@ class AdminPersonel(admin.ModelAdmin):
         "failurereasondescription",
         "suggestionfailure",
     ]
+
+
 
 
 class LoginUserAdmin(admin.ModelAdmin):

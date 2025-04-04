@@ -1,6 +1,5 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
-import axios from "axios";
 import "../styles/Login.css";
 import { useNavigate } from "react-router-dom";
 import api from "../api";
@@ -14,23 +13,18 @@ const LoginMainForm = ({ userType }) => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError(""); // Clear previous error
+    setError("");
 
     try {
-      // Send the login request
       const response = await api.post("/api/login/", {
         username,
         password,
       });
 
-      // Check response and handle navigation
       if (response.data.token) {
-        // alert(`Login successful as ${response.data.user_type}`);
-        // Store token if needed (for future API requests)
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("user_type", response.data.user_type);
 
-        // Navigate to the corresponding page
         switch (response.data.user_type) {
           case "pm":
             navigate("/admindashboard");
@@ -55,7 +49,7 @@ const LoginMainForm = ({ userType }) => {
             break;
           default:
             console.warn("Unknown user type:", response.data.user_type);
-            setError("Unknown user type. Contact support."); // Handle unknown types
+            setError("Unknown user type. Contact support.");
             break;
         }
       } else {
@@ -78,6 +72,7 @@ const LoginMainForm = ({ userType }) => {
             {" "}
             <input
               type="text"
+              name="username"
               placeholder="Username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
@@ -87,6 +82,7 @@ const LoginMainForm = ({ userType }) => {
             {" "}
             <input
               type="password"
+              name="password"
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}

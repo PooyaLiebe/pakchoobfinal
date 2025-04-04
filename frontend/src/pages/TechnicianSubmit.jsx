@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import "../styles/SubmitForm.css";
-import { useNavigate, useParams, Link, Navigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import Header from "../components/Common/Header";
 import api from "../api";
@@ -92,9 +92,9 @@ function TechnicianSubmit() {
       const response = await api.post("/api/techniciansubmit/", {
         formcode: values?.formcode || formcode,
         failurepart: values.failurepart,
-        failuretime: formatDateTime(values.failuretime),
-        sparetime: formatDateTime(values.sparetime),
-        startfailuretime: formatDateTime(values.startfailuretime),
+        failuretime: values.failuretime,
+        sparetime: values.sparetime,
+        startfailuretime: values.startfailuretime,
         problemdescription: values.problemdescription,
         jobstatus: values.jobstatus,
       });
@@ -216,9 +216,10 @@ function TechnicianSubmit() {
       });
 
       if (response.data.status === "success") {
+        alert("فرم ثبت شد");
         setTech((prevTech) => ({
           ...prevTech, // Keep all previous values
-          formcode: formcode, 
+          formcode: formcode, // Reset formcode
           personel: "", // Clear personel
           personelnumber: "", // Clear personelnumber
           specialjob: "کارشناس",
@@ -400,7 +401,8 @@ function TechnicianSubmit() {
                             <main className="max-w-7xl mx-auto py-6 px-4 lg:px-8">
                               <motion.div>
                                 <div className="fixed inset-0 flex items-center justify-center z-20">
-                                  <div className="rounded">
+                                  <div className="fixed inset-0 bg-gray-700 opacity-50" />
+                                  <div className="w-[520px] justify-center flex aling-center rounded-2xl">
                                     <div className="container">
                                       <form onSubmit={handleAghlamSubmit}>
                                         <header className="flex mb-6 justify-center text-center font-bold">
@@ -473,7 +475,6 @@ function TechnicianSubmit() {
                                               type="text"
                                               name="vahedkala"
                                               id="vahedkala"
-                                              placeholder=""
                                               className="outline-none text-14 w-full font-normal flex justify-center text-center  items-center rounded-md shadow-lg border-2 p-2 h-11 m-2"
                                               value={aghlam.vahedkala}
                                               onChange={handleInputChange}

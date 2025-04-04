@@ -129,7 +129,7 @@ form .nextBtn .next-icon {
 
 @media (max-width: 750px) {
   form .fields .input-field {
-    width: calc(100% / 2 - 15px);
+    width: calc(100% / 1 - 15px);
   }
 }
 form select option {

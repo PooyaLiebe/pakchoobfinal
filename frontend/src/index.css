@@ -1,1 +1,6 @@
 @import "tailwindcss";
+@font-face {
+    font-family: "CustomFont";
+    src: url("path/to/font.woff2") format("woff2");
+    font-display: swap; /* This will help ensure text is visible immediately */
+  }

@@ -84,27 +84,21 @@ const Sidebar = () => {
           href: "/admindashboard",
         },
         {
-          name: "Submit",
-          icon: FormInput,
-          color: "#6366f1",
-          href: "/techniciansubmit",
-        },
-        {
           name: "Forms",
-          icon: FormInput,
-          color: "#6366f1",
+          icon: ClipboardList,
+          color: "#10B981",
           href: "/mechanicform",
         },
         {
           name: "PM Forms",
-          icon: FormInput,
-          color: "#6366f1",
+          icon: ClipboardList,
+          color: "#3b82f6",
           href: "/pmforms",
         },
         {
           name: "Logout",
           icon: Power,
-          color: "#6366f1",
+          color: "#6ee7b7",
           href: "/logout",
         },
       ]);
@@ -116,28 +110,23 @@ const Sidebar = () => {
           color: "#6366f1",
           href: "/electricdashboard",
         },
-        {
-          name: "Submit",
-          icon: FormInput,
-          color: "#6366f1",
-          href: "/techniciansubmit",
-        },
+
         {
           name: "Forms",
-          icon: FormInput,
-          color: "#6366f1",
+          icon: ClipboardList,
+          color: "#10B981",
           href: "/electricform",
         },
         {
           name: "PM Forms",
-          icon: FormInput,
-          color: "#6366f1",
+          icon: ClipboardList,
+          color: "#3b82f6",
           href: "/pmforms",
         },
         {
           name: "Logout",
           icon: Power,
-          color: "#6366f1",
+          color: "#6ee7b7",
           href: "/logout",
         },
       ]);
@@ -149,28 +138,23 @@ const Sidebar = () => {
           color: "#6366f1",
           href: "/utilitydashboard",
         },
-        {
-          name: "Submit",
-          icon: FormInput,
-          color: "#6366f1",
-          href: "/techniciansubmit",
-        },
+
         {
           name: "Forms",
-          icon: FormInput,
-          color: "#6366f1",
+          icon: ClipboardList,
+          color: "#10B981",
           href: "/utilityform",
         },
         {
           name: "Pm Forms",
-          icon: FormInput,
-          color: "#6366f1",
+          icon: ClipboardList,
+          color: "#3b82f6",
           href: "/pmforms",
         },
         {
           name: "Logout",
           icon: Power,
-          color: "#6366f1",
+          color: "#6ee7b7",
           href: "/logout",
         },
       ]);
@@ -182,28 +166,23 @@ const Sidebar = () => {
           color: "#6366f1",
           href: "/operatordashboard",
         },
-        {
-          name: "Submit",
-          icon: FormInput,
-          color: "#6366f1",
-          href: "/operatorsubmit",
-        },
+
         {
           name: "Forms",
-          icon: FormInput,
-          color: "#6366f1",
+          icon: ClipboardList,
+          color: "#10B981",
           href: "/productionform",
         },
         {
           name: "Pm Forms",
-          icon: FormInput,
-          color: "#6366f1",
+          icon: ClipboardList,
+          color: "#3b82f6",
           href: "/pmforms",
         },
         {
           name: "Logout",
           icon: Power,
-          color: "#6366f1",
+          color: "#6ee7b7",
           href: "/logout",
         },
       ]);
@@ -215,28 +194,23 @@ const Sidebar = () => {
           color: "#6366f1",
           href: "/metalworkingdashboard",
         },
-        {
-          name: "Submit",
-          icon: FormInput,
-          color: "#6366f1",
-          href: "/techniciansubmit",
-        },
+
         {
           name: "Forms",
-          icon: FormInput,
-          color: "#6366f1",
+          icon: ClipboardList,
+          color: "#10B981",
           href: "/metalworkingform",
         },
         {
           name: "Pm Forms",
-          icon: FormInput,
-          color: "#6366f1",
+          icon: ClipboardList,
+          color: "#3b82f6",
           href: "/pmforms",
         },
         {
           name: "Logout",
           icon: Power,
-          color: "#6366f1",
+          color: "#6ee7b7",
           href: "/logout",
         },
       ]);
@@ -248,28 +222,23 @@ const Sidebar = () => {
           color: "#6366f1",
           href: "/tarashkaridashboard",
         },
-        {
-          name: "Submit",
-          icon: FormInput,
-          color: "#6366f1",
-          href: "/tarashkarisubmit",
-        },
+
         {
           name: "Forms",
-          icon: FormInput,
-          color: "#6366f1",
+          icon: ClipboardList,
+          color: "#10B981",
           href: "/tarashkariform",
         },
         {
           name: "Pm Forms",
-          icon: FormInput,
-          color: "#6366f1",
+          icon: ClipboardList,
+          color: "#3b82f6",
           href: "/pmforms",
         },
         {
           name: "Logout",
           icon: Power,
-          color: "#6366f1",
+          color: "#6ee7b7",
           href: "/logout",
         },
       ]);
